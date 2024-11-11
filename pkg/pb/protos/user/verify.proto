@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+service VerifyService {
+    rpc RegisterVerification (RegisterVerificationRequest) returns (RegisterVerificationResponse);
+    rpc Verification (VerificationRequest) returns (VerificationResponse);
+}
+
+// apply for verification code
+message RegisterVerificationRequest {
+    string email = 1;
+    string countryCode = 2;
+    string mobileNumber = 3;
+    string type = 4;
+}
+
+message RegisterVerificationResponse {
+    string verificationCodePrefix = 1;
+    string verificationCode = 2;
+    string verificationCodeToken = 3;
+}
+
+// verify the identity
+message VerificationRequest {
+    string email = 1;
+    string countryCode = 2;
+    string mobileNumber = 3;
+    string verificationCodePrefix = 4;
+    string verificationCode = 5;
+    string verificationCodeToken = 6;
+    string type = 7;
+}
+
+message VerificationResponse {
+    bool result = 1;
+}
+
+
+// if verification failed
+message VerificationErrorResponse {
+	// 已錯誤次數
+	int32 errorCount = 1;
+	// 總共幾次機會
+	int32 totalAttempts = 2;
+}

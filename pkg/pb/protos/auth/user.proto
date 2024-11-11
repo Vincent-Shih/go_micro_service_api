@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "/auth";
+
+import "pkg/pb/protos/auth/common.proto";
+
+service UserService {
+    rpc CreateUser (CreateUserRequest) returns (Empty); // 創建用戶
+    rpc UpdateUser (UpdateUserRequest) returns (Empty); // 更新用戶資訊
+    rpc CheckAccountExistence (AccountExistenceRequest) returns (ExistenceResponse); // 檢查帳號是否存在
+}
+
+message CreateUserRequest {
+    int64 client_id = 1; // 客戶端id
+    int64 id = 2; // 用戶id
+    string account = 3; // 用戶帳號
+    string password = 4; // 用戶密碼 (可為空字串)
+    int32 status = 5; // 用戶狀態 使用 pkg/enum/user_status 的id作為參數
+}
+
+message UpdateUserRequest {
+    int64 id = 1; // 要更新的用戶id
+    string account = 2; // 用戶帳號
+    string password = 3; // 用戶密碼 (可為空字串)
+    int32 status = 4; // 用戶狀態 使用 pkg/enum/user_status 的id作為參數
+}
+
+message AccountExistenceRequest {
+    string account = 1; // 用戶帳號
+}
+
+message ExistenceResponse {
+    bool existence = 1; // 是否存在
+}

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+service UserService {
+    rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse);
+    rpc GetProfile (GetProfileRequest) returns (GetProfileResponse);
+    rpc GetProfileFromOAuth (GetProfileFromOAuthRequest) returns (GetProfileFromOAuthResponse);
+    // 驗證 mobile number, email, account 是否存在
+    rpc CheckMobileExistence(MobileExistenceRequest) returns (ExistenceResponse);
+    rpc CheckEmailExistence(EmailExistenceRequest) returns (ExistenceResponse);
+    rpc IsAccountExist(IsAccountExistRequest) returns (ExistenceResponse);
+    // 登入取得 user 資料 Request值不一定是
+    rpc GetLoginUserInfo(GetLoginUserInfoRequest) returns (GetLoginUserInfoResponse);
+  }
+
+message CreateProfileRequest {
+    int64 id = 1; // user id
+    string account = 2;
+    string email = 3;
+    string countryCode = 4;
+    string mobileNumber = 5;
+}
+
+message CreateProfileResponse {
+}
+
+message GetProfileRequest {
+    int64 id = 1; // user id, not profile id
+}
+
+message GetProfileResponse {
+    string username = 1;
+    string email = 2;
+    string countryCode = 3;
+    string mobileNumber = 4;
+}
+
+// get oauth information (deprecated)
+message GetProfileFromOAuthRequest {
+    string provider =1;
+    string accessToken =2; // jwt token of oauth provider from frontend
+}
+
+message GetProfileFromOAuthResponse {
+    string openID = 1;
+    string email = 2;
+}
+  
+message MobileExistenceRequest {
+  string mobileNumber = 1;
+  string countryCode = 2;
+}
+
+
+message EmailExistenceRequest {
+  string email = 1;
+}
+
+message IsAccountExistRequest {
+  string account = 1;
+}
+
+message ExistenceResponse {
+  bool exist = 1;
+}
+
+// 登入傳入 account, mobile number or email 
+message GetLoginUserInfoRequest {
+  string loginType = 1;
+  string countryCode = 2;
+  string mobileNumber = 3;
+  string email = 4;
+  string account = 5;
+}
+
+// 確認結果回傳資料
+message GetLoginUserInfoResponse {
+  int64 userId = 1;
+  string countryCode = 2;
+  string mobileNumber = 3;
+  string email = 4;
+  string account = 5;
+}

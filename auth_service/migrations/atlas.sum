@@ -1,0 +1,5 @@
+h1:wlC/i4vCbPR9GsYMVrVkHBPzZ66By2FFWT9/btNHAz8=
+20241012155521_init.sql h1:4tXio+VGggV3jzLhzEiERJqwT7f/vLOu5NzEEXJr8EQ=
+20241012155522_role_increment.sql h1:m32l96kcHuky+DzzBed7WG8r45ALHkDWeptMtAUTTdY=
+20241013102312_seed_system_roles.sql h1:RevZN8y97nJE/vwDge0zFi4C1rCC9c5W7QUYs++6wQo=
+20241015103723_alter_login_record.sql h1:ktGmfluyKwsTCSLF9NzpZEPrb/mVJeUKfIvWTQW3Z8o=

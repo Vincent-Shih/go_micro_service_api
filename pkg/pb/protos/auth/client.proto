@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "/auth";
+
+import "pkg/pb/protos/auth/common.proto";
+
+service ClientService {
+    rpc CreateClient (CreateClientRequest) returns (Empty); // 創建客戶端
+    rpc UpdateClient (UpdateClientRequest) returns (Empty); // 更新客戶端資訊
+    rpc CreateRole (CreateRoleRequest)  returns (Role); // 創建客戶端角色
+    rpc UpdateRole (UpdateRoleRequest)  returns (Role); // 更新客戶端角色
+    rpc DeleteRole (DeleteRoleRequest)  returns (Empty); // 刪除客戶端角色
+}
+
+message CreateClientRequest {
+    int64 client_id = 1; // 客戶端id
+    int64 merchant_id = 2; // 客戶端所屬商戶id
+    int32 client_type = 3; // 客戶端類型 使用 pkg/enum/client_type 的id作為參數
+    int32 login_failed_times = 4; // 登入失敗次數
+    int64 token_expire_secs = 5; // token過期時間(秒)
+    bool is_active = 6; // 是否啟用
+}
+
+message UpdateClientRequest {
+    int64 client_id = 1; // 客戶端id
+    int32 login_failed_times = 2; // 登入失敗次數
+    int64 token_expire_secs = 3; // token過期時間(秒)
+    bool is_active = 4; // 是否啟用
+}
+
+message CreateRoleRequest {
+    int64 client_id = 1;
+    string role_name = 2;
+    repeated int64 perm_ids = 3; // 權限id 使用 pkg/enum/permission 的id作為參數
+}
+
+message UpdateRoleRequest {
+    int64 client_id = 1;
+    int64 role_id = 2;
+    string role_name = 3;
+    repeated int64 perm_ids = 4;  // 權限id 使用 pkg/enum/permission 的id作為參數
+}
+
+message DeleteRoleRequest {
+    int64 client_id = 1;
+    int64 role_id = 2;
+}
+
+
+
+

@@ -1,0 +1,104 @@
+
+services:
+
+# this compose is for test
+# 這個compose檔因方便將需要的啟動的相關服務都放在這裡 和要mount的資料都放在根目錄底下
+# 實際情況 db的建議拆分出來, mount的config與需要持有化的資料也建議拆分出來
+
+
+  # loki for logs
+  loki:
+    container_name: loki_2.9.4
+    image: grafana/loki:2.9.4
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+    networks:
+      loki_prom_network:
+        aliases:
+          - loki
+
+  # prometheus for metrics
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    networks:
+      loki_prom_network:
+        aliases:
+          - prometheus
+
+  # grafana for visualization of logs and metrics and traces
+  grafana:
+    container_name: grafana-enterprise
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_FEATURE_TOGGLES_ENABLE: "tempoServiceGraph"
+    networks:
+      loki_prom_network:
+        aliases:
+          - grafana
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      # - "16686:14268"  # jaeger ingest
+      - "3200:3200"   # tempo
+      - "9095:9095" # tempo grpc
+      - "4317:4317"  # otlp grpc
+      - "4318:4318"  # otlp http
+      # - "9411:9411"   # zipkin
+    command: ["-config.file=./etc/tempo/tempo-local.yaml"]
+    volumes:
+      - ./tempo-config.yaml:/etc/tempo/tempo-local.yaml
+    networks:
+      loki_prom_network:
+        aliases:
+          - tempo
+
+
+# otel collector , we use this to collect the traces and metrics
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "43177:4317"   # OTLP gRPC receiver
+      - "55670:55679" # zpages extension
+      # - "5779:5778"  # default jaeger remote sampling port
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+    networks:
+      loki_prom_network:
+        aliases:
+          - otel-collector
+
+  # jaeger collector for otel exporter
+  # jaeger:
+  #   image: jaegertracing/all-in-one:latest
+  #   ports:
+  #     - "16686:16686"
+  #     - "14268"
+  #     - "14250"
+  #     - "5778:5778"
+  #     - "4317:4317"
+  #     - "4318:4318"
+  #   container_name: jaeger-collector
+  #   environment:
+  #     - COLLECTOR_OTLP_ENABLED=true
+  #   networks:
+  #     loki_prom_network:
+  #       aliases:
+  #         - jeager
+
+networks:
+  loki_prom_network:
+    driver: bridge

@@ -1,0 +1,437 @@
+basePath: /api
+definitions:
+  request.LoginRequest:
+    properties:
+      account:
+        maxLength: 50
+        minLength: 3
+        type: string
+      countryCode:
+        type: string
+      email:
+        type: string
+      loginType:
+        enum:
+        - account
+        - email
+        - mobileNumber
+        type: string
+      mobileNumber:
+        type: string
+      password:
+        maxLength: 15
+        minLength: 6
+        type: string
+    required:
+    - loginType
+    - password
+    type: object
+  request.RegisterRequest:
+    properties:
+      account:
+        maxLength: 50
+        minLength: 3
+        type: string
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+      password:
+        maxLength: 15
+        minLength: 6
+        type: string
+      verificationCode:
+        type: string
+      verificationCodePrefix:
+        type: string
+      verificationCodeToken:
+        type: string
+    required:
+    - account
+    - password
+    - verificationCode
+    - verificationCodePrefix
+    - verificationCodeToken
+    type: object
+  request.VerificationRequest:
+    properties:
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+      type:
+        enum:
+        - forgotPwd
+        - unusualLogin
+        type: string
+      verificationCode:
+        type: string
+      verificationCodePrefix:
+        type: string
+      verificationCodeToken:
+        type: string
+    required:
+    - type
+    - verificationCode
+    - verificationCodePrefix
+    - verificationCodeToken
+    type: object
+  response.ExistenceResponse:
+    properties:
+      isExist:
+        example: false
+        type: boolean
+    type: object
+  response.LoginAnomalousResponse:
+    properties:
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+    type: object
+  response.LoignPassResponse:
+    properties:
+      account:
+        type: string
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+    type: object
+  response.RegisterResponse:
+    properties:
+      account:
+        type: string
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+    type: object
+  response.RegisterVerificationResponse:
+    properties:
+      verificationCodePrefix:
+        type: string
+      verificationCodeToken:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      trace_id:
+        type: integer
+    type: object
+  response.TokenResponse:
+    properties:
+      accessToken:
+        type: string
+    type: object
+  response.VerificationErrorResponse:
+    properties:
+      errorCount:
+        description: 已錯誤次數
+        type: integer
+      totalAttempts:
+        description: 總共幾次機會
+        type: integer
+    type: object
+  response.VerificationResponse:
+    properties:
+      account:
+        type: string
+      countryCode:
+        type: string
+      email:
+        type: string
+      mobileNumber:
+        type: string
+    type: object
+info:
+  contact:
+    email: vincent@kgs.tw
+    name: KGS
+    url: http://www.swagger.io/support
+  description: This is the KGS Frontend API
+  license:
+    name: Belong to KGS
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: KGS Frontend API
+  version: "0.1"
+paths:
+  /v1/auth/:
+    get:
+      description: 這個 api 主要是要讓客戶端驗證，並且取得 JWT 簽名，如果拿到簽名的話，在後續就可以根據簽名來存取 api，client_id
+        當有營運單位提出對接時，由大後台產生並提供給前端
+      parameters:
+      - description: Client ID
+        in: header
+        name: client_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.TokenResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 客戶端驗證，並且取得 JWT 簽名
+      tags:
+      - Auth
+  /v1/users/:
+    post:
+      consumes:
+      - application/json
+      description: Create User
+      parameters:
+      - description: Register Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RegisterResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.VerificationErrorResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Create User
+      tags:
+      - User
+  /v1/users/existence:
+    get:
+      description: Check User Existence
+      parameters:
+      - description: Account
+        in: query
+        name: account
+        type: string
+      - description: Email
+        in: query
+        name: email
+        type: string
+      - description: Mobile Number
+        in: query
+        name: mobileNumber
+        type: string
+      - description: Country Code
+        in: query
+        name: countryCode
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ExistenceResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 檢查email / mobile number+ country code / account是否存在
+      tags:
+      - User
+  /v1/users/login/:
+    post:
+      consumes:
+      - application/json
+      description: 這個 api 主要是要讓客戶端登入，登入成功後會回傳 JWT 簽名，如果拿到簽名的話，在後續就可以根據簽名來存取 api
+      parameters:
+      - description: Login Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoignPassResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginAnomalousResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 登入
+      tags:
+      - Auth
+  /v1/users/verification/:
+    post:
+      description: Verification
+      parameters:
+      - description: Verification Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.VerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.VerificationResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 驗證
+      tags:
+      - User
+  /v1/users/verificationCode/:
+    get:
+      description: Register Verification
+      parameters:
+      - description: Type
+        enum:
+        - forgotPwd
+        - unusualLogin
+        in: query
+        name: type
+        type: string
+      - description: Email
+        in: query
+        name: email
+        type: string
+      - description: Country Code
+        in: query
+        name: countryCode
+        type: string
+      - description: Mobile Number
+        in: query
+        name: mobileNumber
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RegisterVerificationResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 申請驗證碼
+      tags:
+      - User
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

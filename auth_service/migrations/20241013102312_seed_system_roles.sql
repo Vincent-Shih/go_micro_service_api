@@ -1,0 +1,6 @@
+--  JUST FOR TESTING
+INSERT INTO roles (id, created_at, updated_at, "name", permissions, is_system, client_type) VALUES(101, '2024-10-12 23:24:56.191', '2024-10-12 23:29:09.282', 'Admin', '[]'::jsonb, true, 2);
+INSERT INTO roles (id, created_at, updated_at, "name", permissions, is_system, client_type) VALUES(102, '2024-10-12 23:24:56.191', '2024-10-12 23:29:09.282', 'CustomerSupport', '[]'::jsonb, true, 2);
+INSERT INTO roles (id, created_at, updated_at, "name", permissions, is_system, client_type) VALUES(1, '2024-10-12 23:24:56.191', '2024-10-12 23:29:09.282', 'Guest', '[]'::jsonb, true, 1);
+INSERT INTO roles (id, created_at, updated_at, "name", permissions, is_system, client_type) VALUES(2, '2024-10-12 23:24:56.191', '2024-10-12 23:29:09.282', 'Player', '[{"Id": 3, "Name": "PlayerPlayGame"}]'::jsonb, true, 1);
+INSERT INTO roles (id, created_at, updated_at, "name", permissions, is_system, client_type) VALUES(3, '2024-10-12 23:24:56.191', '2024-10-12 23:29:09.282', 'KycVerifiedPlayer', '[{"Id": 2, "Name": "PlayerDeposit"}, {"Id": 1, "Name": "PlayerWithdraw"}, {"Id": 3, "Name": "PlayerPlayGame"}]'::jsonb, true, 1);

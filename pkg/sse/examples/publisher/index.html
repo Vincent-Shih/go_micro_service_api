@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    const source = new EventSource('http://localhost:8080/sse');
+    source.onopen = function () {
+        console.log('Connection was opened.');
+    };
+    source.onmessage = function (event) {
+        const node = document.createElement('p');
+        node.textContent = event.data;
+        document.body.appendChild(node);
+    };
+    source.onerror = function (error) {
+        console.error('Error occurred:', error);
+    };
+</script>
+
+</html>
