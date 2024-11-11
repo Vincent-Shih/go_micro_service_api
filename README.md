@@ -23,7 +23,6 @@
 2. 使用 `redis.yml` 啟動 redis，密碼為 `P@ssw0rd`
 
     ```sh
-        ```sh
         docker compose -f redis.yml up -d
     ```
 
