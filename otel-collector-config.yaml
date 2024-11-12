@@ -2,12 +2,18 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: 0.0.0.0:4317
       http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
 
 exporters:
   debug:
-    loglevel: debug
-  # debug: {}
+    verbosity: detailed
   otlp/tempo:
     endpoint: http://tempo:4317
     tls:
@@ -17,10 +23,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlp/tempo]
+      processors: [batch]
+      exporters: [otlp/tempo, debug]
     metrics:
       receivers: [otlp]
-      exporters: [otlp/tempo]
+      processors: [batch]
+      exporters: [debug]
     logs:
       receivers: [otlp]
-      exporters: [otlp/tempo]
+      processors: [batch]
+      exporters: [debug]
