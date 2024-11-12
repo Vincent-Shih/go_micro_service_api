@@ -182,7 +182,7 @@ func fooHandler(c *gin.Context) {
 
     type User struct {
         Id    string `json:"id" example:"1"`
-        Email string `json:"email" example:"vincent@kgs.tw"`
+        Email string `json:"email" example:"vincent@cus.tw"`
     }
 
     // ShowAccount godoc

@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 package api;
-option go_package = "kgs/otel/example/api;api";
+option go_package = "cus/otel/example/api;api";
 
 
 service HelloService {

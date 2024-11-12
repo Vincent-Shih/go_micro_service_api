@@ -1,4 +1,4 @@
-# Kgs Otel
+# Cus Otel
 
 This is an integration tool based on opentelemetry-go, primarily implementing tracing functionality in gin and grpc.
 It allows developers to use simple methods to achieve service monitoring and logging functions during development.
@@ -12,8 +12,8 @@ Below is a simple example showing how to initialize telemetry and how to add mid
 ```go
 import (
 	"context"
-	cus_otel "kgs/otel"
-	otelgin "kgs/otel/gin"
+	cus_otel "cus/otel"
+	otelgin "cus/otel/gin"
 	"log"
 	"net/http"
 

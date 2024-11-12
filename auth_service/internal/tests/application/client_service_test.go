@@ -74,8 +74,8 @@ func TestCreateClient(t *testing.T) {
 		// Find the client in cache
 		key := fmt.Sprintf("%s:%d", ent_impl.ClientInfoPrefix, clientInfo.Id)
 		aggregateClient := &aggregate.Client{}
-		KgsErr := cache.GetObject(ctx, key, aggregateClient)
-		require.Nil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateClient)
+		require.Nil(t, CusErr)
 		assert.Equal(t, clientInfo.Id, aggregateClient.Id)
 		assert.Equal(t, clientInfo.MerchantId, aggregateClient.MerchantId)
 		assert.Equal(t, clientInfo.ClientType, aggregateClient.ClientType)
@@ -99,10 +99,10 @@ func TestCreateClient(t *testing.T) {
 
 		// Create the same client again
 		_, e = clientApp.CreateClient(ctx, req)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.NotNil(t, e)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.ResourceIsExist, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceIsExist, cusErr.Code().Int())
 	})
 
 	t.Run("CreateClientInvalidClientType", func(t *testing.T) {
@@ -116,10 +116,10 @@ func TestCreateClient(t *testing.T) {
 		}
 
 		_, e := clientApp.CreateClient(ctx, req)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.NotNil(t, e)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 }
 
@@ -190,8 +190,8 @@ func TestUpdateClient(t *testing.T) {
 		// Find the client in cache
 		key := fmt.Sprintf("%s:%d", ent_impl.ClientInfoPrefix, clientInfo.Id)
 		aggregateClient := &aggregate.Client{}
-		KgsErr := cache.GetObject(ctx, key, aggregateClient)
-		require.Nil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateClient)
+		require.Nil(t, CusErr)
 		assert.Equal(t, clientInfo.Id, aggregateClient.Id)
 		assert.Equal(t, clientInfo.MerchantId, aggregateClient.MerchantId)
 		assert.Equal(t, clientInfo.ClientType, aggregateClient.ClientType)
@@ -210,10 +210,10 @@ func TestUpdateClient(t *testing.T) {
 		}
 
 		_, e := clientApp.UpdateClient(ctx, req)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.NotNil(t, e)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 	})
 
 	t.Run("Update client invalid argument", func(t *testing.T) {
@@ -226,10 +226,10 @@ func TestUpdateClient(t *testing.T) {
 		}
 
 		_, e := clientApp.UpdateClient(ctx, req)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.NotNil(t, e)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 }
 
@@ -288,8 +288,8 @@ func TestCreateRole(t *testing.T) {
 		// Find the role in cache
 		key := fmt.Sprintf("%s:%d:%d", ent_impl.RolePrefix, req.ClientId, res.RoleId)
 		aggregateRole := &entity.Role{}
-		KgsErr := cache.GetObject(ctx, key, aggregateRole)
-		require.Nil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateRole)
+		require.Nil(t, CusErr)
 		assert.Equal(t, res.RoleId, aggregateRole.Id)
 		assert.Equal(t, res.RoleName, aggregateRole.Name)
 	})
@@ -305,9 +305,9 @@ func TestCreateRole(t *testing.T) {
 		// Create the same role again
 		_, e := clientApp.CreateRole(ctx, req)
 		assert.NotNil(t, e)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 }
 
@@ -382,8 +382,8 @@ func TestUpdateRole(t *testing.T) {
 		// Find the role in cache
 		key := fmt.Sprintf("%s:%d:%d", ent_impl.RolePrefix, req.ClientId, req.RoleId)
 		aggregateRole := &entity.Role{}
-		KgsErr := cache.GetObject(ctx, key, aggregateRole)
-		require.Nil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateRole)
+		require.Nil(t, CusErr)
 		assert.Equal(t, req.RoleId, aggregateRole.Id)
 		assert.Equal(t, req.RoleName, aggregateRole.Name)
 		assert.Equal(t, 2, len(aggregateRole.Permissions))
@@ -400,9 +400,9 @@ func TestUpdateRole(t *testing.T) {
 
 		_, e := clientApp.UpdateRole(ctx, req)
 		assert.NotNil(t, e)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 
 	t.Run("UpdateRoleWithWrongRoleId", func(t *testing.T) {
@@ -416,9 +416,9 @@ func TestUpdateRole(t *testing.T) {
 
 		_, e := clientApp.UpdateRole(ctx, req)
 		assert.NotNil(t, e)
-		kgsErr, ok := e.(*cus_err.CusError)
+		cusErr, ok := e.(*cus_err.CusError)
 		require.True(t, ok)
-		assert.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 	})
 }
 
@@ -490,8 +490,8 @@ func TestDeleteRole(t *testing.T) {
 		// Find the role in cache
 		key := fmt.Sprintf("%s:%d:%d", ent_impl.RolePrefix, req.ClientId, req.RoleId)
 		aggregateRole := &entity.Role{}
-		KgsErr := cache.GetObject(ctx, key, aggregateRole)
-		require.NotNil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateRole)
+		require.NotNil(t, CusErr)
 		assert.Empty(t, aggregateRole)
 	})
 
@@ -516,8 +516,8 @@ func TestDeleteRole(t *testing.T) {
 		// Find the role in cache
 		key := fmt.Sprintf("%s:%d:%d", ent_impl.RolePrefix, req.ClientId, req.RoleId)
 		aggregateRole := &entity.Role{}
-		KgsErr := cache.GetObject(ctx, key, aggregateRole)
-		require.NotNil(t, KgsErr)
+		CusErr := cache.GetObject(ctx, key, aggregateRole)
+		require.NotNil(t, CusErr)
 		assert.Empty(t, aggregateRole)
 
 	})

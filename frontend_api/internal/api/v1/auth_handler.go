@@ -63,24 +63,24 @@ func (a *AuthHandler) ClientAuth(c *gin.Context) {
 	// Get the client id from Header
 	val := c.GetHeader("client_id")
 	if val == "" {
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "Client id not found in header", nil)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "Client id not found in header", nil)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 	// Convert the client id to int
 	clientId, err := strconv.Atoi(val)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "Invalid client id", err)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "Invalid client id", err)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
 	// Call the auth grpc
-	res, kgsErr := a.authGrpc.ClientAuth(ctx, int64(clientId))
-	if kgsErr != nil {
-		responder.Error(kgsErr).WithContext(c)
+	res, cusErr := a.authGrpc.ClientAuth(ctx, int64(clientId))
+	if cusErr != nil {
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
@@ -117,9 +117,9 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		}
 	}
 	if accessToken == "" {
-		kgsErr := cus_err.New(cus_err.MissingAccessToken, "Access token not found in header", nil)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.MissingAccessToken, "Access token not found in header", nil)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
@@ -127,10 +127,10 @@ func (a *AuthHandler) Login(c *gin.Context) {
 	var loginRequest request.LoginRequest
 
 	if err := c.ShouldBindBodyWithJSON(&loginRequest); err != nil {
-		// New a Kgserr with InvalidArgument error code and log it berfore returning
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		// New a Cuserr with InvalidArgument error code and log it berfore returning
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
@@ -138,11 +138,11 @@ func (a *AuthHandler) Login(c *gin.Context) {
 	userAgent := c.GetHeader("User-Agent")
 	ip := c.ClientIP()
 
-	userInfo, kgsErr := a.userGrpc.GetLoginUserInfo(ctx, loginRequest)
+	userInfo, cusErr := a.userGrpc.GetLoginUserInfo(ctx, loginRequest)
 
 	// 如有搜尋的錯誤代表搜尋不到結果
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
 		responder.Error(cus_err.New(cus_err.AccountError, "Account not found")).WithContext(c)
 		return
 	}
@@ -155,29 +155,29 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		AccessToken: accessToken,
 		Password:    loginRequest.Password,
 	}
-	res, kgsErr := a.authGrpc.Login(ctx, loginInfo)
-	if kgsErr != nil {
-		// 直接使用 kgsErr，因為錯誤資訊已經在 client 層處理好了
-		switch kgsErr.Code().Int() {
+	res, cusErr := a.authGrpc.Login(ctx, loginInfo)
+	if cusErr != nil {
+		// 直接使用 cusErr，因為錯誤資訊已經在 client 層處理好了
+		switch cusErr.Code().Int() {
 		case cus_err.AccountPasswordError:
 			// 處理密碼錯誤
-			cus_otel.Error(ctx, kgsErr.Error())
-			responder.Error(kgsErr).WithContext(c)
+			cus_otel.Error(ctx, cusErr.Error())
+			responder.Error(cusErr).WithContext(c)
 			return
 
 		case cus_err.UnusualLogin:
 			// 處理異常登入
-			kgsErr.WithData(response.LoginAnomalousResponse{
+			cusErr.WithData(response.LoginAnomalousResponse{
 				Email:        userInfo.Email,
 				CountryCode:  userInfo.CountryCode,
 				MobileNumber: userInfo.MobileNumber,
 			})
-			responder.Error(kgsErr).WithContext(c)
+			responder.Error(cusErr).WithContext(c)
 			return
 
 		default:
 			// 處理其他可能的錯誤
-			responder.Error(kgsErr).WithContext(c)
+			responder.Error(cusErr).WithContext(c)
 			return
 
 		}

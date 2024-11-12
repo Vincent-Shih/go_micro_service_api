@@ -161,7 +161,7 @@ definitions:
     type: object
 info:
   contact:
-    email: vincent@kgs.tw
+    email: vincent@cus.tw
     name: KGS
     url: http://www.swagger.io/support
   description: This is the KGS Frontend API

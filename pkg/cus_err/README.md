@@ -1,38 +1,38 @@
-# Kgs Error
+# Cus Error
 
 ## Usage
 
-Create a KgsErr
+Create a CusErr
 
 ``` go
 func foo() *cus_err.CusError {
     // Case 1.
-   kgsErr := cus_err.New(cus_err.InternalServerError, "Your error message")
+   cusErr := cus_err.New(cus_err.InternalServerError, "Your error message")
 
    // Case 2: New a cus_err with other error
    otherErr := someService()
-   kgsErr = cus_err.New(cus_err.InternalServerError, "Your error message",otherErr)
+   cusErr = cus_err.New(cus_err.InternalServerError, "Your error message",otherErr)
 
-   return kgsErr
+   return cusErr
 }
 ```
 
-Compare with kgsCode
+Compare with cusCode
 
 ``` go
 func foo() {
-    kgsErr := cus_err.New(cus_err.InternalServerError, "Your error message")
-    if kgsErr.Code() == cus_err.InternalServerError {
+    cusErr := cus_err.New(cus_err.InternalServerError, "Your error message")
+    if cusErr.Code() == cus_err.InternalServerError {
         // Do something...
     }
 }
 ```
 
-Log a kgsError 
+Log a cusError 
 
 ``` go
 func foo(ctx context.Context) {
-    kgsErr := cus_err.New(cus_err.InternalServerError, "Your error message")
+    cusErr := cus_err.New(cus_err.InternalServerError, "Your error message")
 
     // If you want some field to log also, use `NewField()` to record with your err
     cus_otel.Error(ctx, err.Message(), cus_otel.NewField("token", req.AccessToken))

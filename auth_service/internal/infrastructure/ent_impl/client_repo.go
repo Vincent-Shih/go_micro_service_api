@@ -52,8 +52,8 @@ func (c *ClientRepoImpl) Find(ctx context.Context, id int64) (*aggregate.Client,
 	// Fetch client from cache
 	aggregateClient := &aggregate.Client{}
 	key := fmt.Sprintf("%s:%d", ClientInfoPrefix, id)
-	KgsErr := c.cache.GetObject(ctx, key, aggregateClient)
-	if KgsErr == nil {
+	CusErr := c.cache.GetObject(ctx, key, aggregateClient)
+	if CusErr == nil {
 		setClientLoader(c.db, aggregateClient)
 		return aggregateClient, nil
 	}
@@ -62,20 +62,20 @@ func (c *ClientRepoImpl) Find(ctx context.Context, id int64) (*aggregate.Client,
 	entEntity, err := client.AuthClient.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			kgsErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to find client", err)
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to find client", err)
 		cus_otel.Error(ctx, err.Error())
-		return nil, kgsErr
+		return nil, cusErr
 	}
 
 	// Map client type to enum
-	clientType, kgsErr := enum.ClientTypeFromId(int(entEntity.ClientType))
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	clientType, cusErr := enum.ClientTypeFromId(int(entEntity.ClientType))
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create aggregate client
@@ -91,10 +91,10 @@ func (c *ClientRepoImpl) Find(ctx context.Context, id int64) (*aggregate.Client,
 	setClientLoader(c.db, authClient)
 
 	// Save client in cache
-	kgsErr = c.cache.SetObject(ctx, key, authClient, 0)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr = c.cache.SetObject(ctx, key, authClient, 0)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	return authClient, nil
@@ -108,15 +108,15 @@ func (c *ClientRepoImpl) Create(ctx context.Context, authClient *aggregate.Clien
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Validate parameters
-	if kgsErr := c.validateParameters(authClient); kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	if cusErr := c.validateParameters(authClient); cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Check if  Merchant already has a client with the same type
@@ -125,14 +125,14 @@ func (c *ClientRepoImpl) Create(ctx context.Context, authClient *aggregate.Clien
 		Where(authclient.ClientType(authClient.ClientType.Id)).
 		Exist(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 	if isExists {
-		kgsErr := cus_err.New(cus_err.ResourceIsExist, "client already exists for merchant", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.ResourceIsExist, "client already exists for merchant", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create client
@@ -146,9 +146,9 @@ func (c *ClientRepoImpl) Create(ctx context.Context, authClient *aggregate.Clien
 		SetLoginFailedTimes(authClient.LoginFailedTimes).
 		Save(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to create client", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to create client", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create aggregate client
@@ -165,10 +165,10 @@ func (c *ClientRepoImpl) Create(ctx context.Context, authClient *aggregate.Clien
 
 	// Save client in cache
 	key := fmt.Sprintf("%s:%d", ClientInfoPrefix, createdClient.Id)
-	kgsErr := c.cache.SetObject(ctx, key, createdClient, 0)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr := c.cache.SetObject(ctx, key, createdClient, 0)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	return createdClient, nil
@@ -182,9 +182,9 @@ func (c *ClientRepoImpl) Update(ctx context.Context, authClient *aggregate.Clien
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Update client
@@ -194,9 +194,9 @@ func (c *ClientRepoImpl) Update(ctx context.Context, authClient *aggregate.Clien
 		SetLoginFailedTimes(authClient.LoginFailedTimes).
 		Save(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to update client", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to update client", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create aggregate client
@@ -213,10 +213,10 @@ func (c *ClientRepoImpl) Update(ctx context.Context, authClient *aggregate.Clien
 
 	// Save client in cache
 	key := fmt.Sprintf("%s:%d", ClientInfoPrefix, updatedClient.Id)
-	kgsErr := c.cache.SetObject(ctx, key, updatedClient, 0)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr := c.cache.SetObject(ctx, key, updatedClient, 0)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	return updatedClient, nil
@@ -230,9 +230,9 @@ func (c *ClientRepoImpl) CreateRoles(ctx context.Context, clientId int64, r ...e
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create roles
@@ -244,18 +244,18 @@ func (c *ClientRepoImpl) CreateRoles(ctx context.Context, clientId int64, r ...e
 		c.SetClientType(r[i].ClientType.Id)
 	}).Save(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to create roles", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to create roles", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map roles
 	roles := make([]entity.Role, 0, len(entRoles))
 	for _, entRole := range entRoles {
-		clientType, kgsErr := enum.ClientTypeFromId(entRole.ClientType)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		clientType, cusErr := enum.ClientTypeFromId(entRole.ClientType)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
 		role := entity.Role{
@@ -270,10 +270,10 @@ func (c *ClientRepoImpl) CreateRoles(ctx context.Context, clientId int64, r ...e
 	// Save roles in cache
 	for _, role := range roles {
 		key := fmt.Sprintf("%s:%d:%d", RolePrefix, clientId, role.Id)
-		kgsErr := c.cache.SetObject(ctx, key, role, 0)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		cusErr := c.cache.SetObject(ctx, key, role, 0)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 	}
 
@@ -288,9 +288,9 @@ func (c *ClientRepoImpl) BindSystemRoles(ctx context.Context, clientId int64, sy
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 
 	// Check if client exists
@@ -298,14 +298,14 @@ func (c *ClientRepoImpl) BindSystemRoles(ctx context.Context, clientId int64, sy
 		Where(authclient.ID(clientId)).
 		Exist(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 	if !isExists {
-		kgsErr := cus_err.New(cus_err.ResourceNotFound, "client not found", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.ResourceNotFound, "client not found", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 
 	// Bind roles
@@ -319,18 +319,18 @@ func (c *ClientRepoImpl) BindSystemRoles(ctx context.Context, clientId int64, sy
 		AddAuthClientIDs(clientId).
 		Exec(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to bind system roles", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to bind system roles", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 
 	// Save roles in cache
 	for _, role := range sysRoles {
 		key := fmt.Sprintf("%s:%d:%d", RolePrefix, clientId, role.Id)
-		kgsErr := c.cache.SetObject(ctx, key, role, 0)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return kgsErr
+		cusErr := c.cache.SetObject(ctx, key, role, 0)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return cusErr
 		}
 	}
 
@@ -345,9 +345,9 @@ func (c *ClientRepoImpl) DeleteRoles(ctx context.Context, clientId int64, roleId
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 
 	_, err := tx.Role.Delete().
@@ -356,17 +356,17 @@ func (c *ClientRepoImpl) DeleteRoles(ctx context.Context, clientId int64, roleId
 		Where(role.HasAuthClientsWith(authclient.ID(clientId))). // Only delete roles that belong to client
 		Exec(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to delete roles", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to delete roles", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return cusErr
 	}
 
 	// Delete roles from cache
 	for _, rid := range roleIds {
 		key := fmt.Sprintf("%s:%d:%d", RolePrefix, clientId, rid)
-		kgsErr := c.cache.Delete(ctx, key)
-		if kgsErr != nil && kgsErr.Code().Int() != cus_err.ResourceNotFound { // Ignore if key not found
-			return kgsErr
+		cusErr := c.cache.Delete(ctx, key)
+		if cusErr != nil && cusErr.Code().Int() != cus_err.ResourceNotFound { // Ignore if key not found
+			return cusErr
 		}
 	}
 
@@ -381,9 +381,9 @@ func (c *ClientRepoImpl) UpdateRoles(ctx context.Context, clientId int64, domain
 	// Get Client with transaction
 	tx, ok := c.db.GetTx(ctx).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Check if client exists
@@ -391,14 +391,14 @@ func (c *ClientRepoImpl) UpdateRoles(ctx context.Context, clientId int64, domain
 		Where(authclient.ID(clientId)).
 		Exist(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to check if client exists", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 	if !isExists {
-		kgsErr := cus_err.New(cus_err.ResourceNotFound, "client not found", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.ResourceNotFound, "client not found", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Update roles
@@ -412,13 +412,13 @@ func (c *ClientRepoImpl) UpdateRoles(ctx context.Context, clientId int64, domain
 			Save(ctx)
 		if err != nil {
 			if ent.IsNotFound(err) {
-				kgsErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
-				cus_otel.Error(ctx, kgsErr.Error())
-				return nil, kgsErr
+				cusErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
+				cus_otel.Error(ctx, cusErr.Error())
+				return nil, cusErr
 			}
-			kgsErr := cus_err.New(cus_err.InternalServerError, "failed to update roles", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "failed to update roles", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
 		// Map role
@@ -433,10 +433,10 @@ func (c *ClientRepoImpl) UpdateRoles(ctx context.Context, clientId int64, domain
 	// Save roles in cache
 	for _, role := range roles {
 		key := fmt.Sprintf("%s:%d:%d", RolePrefix, clientId, role.Id)
-		kgsErr := c.cache.SetObject(ctx, key, role, 0)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		cusErr := c.cache.SetObject(ctx, key, role, 0)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 	}
 
@@ -451,8 +451,8 @@ func (c *ClientRepoImpl) FindRole(ctx context.Context, clientId int64, roleId in
 	// Fetch role from cache
 	key := fmt.Sprintf("%s:%d:%d", RolePrefix, clientId, roleId)
 	entityRole := &entity.Role{}
-	KgsErr := c.cache.GetObject(ctx, key, entityRole)
-	if KgsErr == nil {
+	CusErr := c.cache.GetObject(ctx, key, entityRole)
+	if CusErr == nil {
 		return entityRole, nil
 	}
 
@@ -472,13 +472,13 @@ func (c *ClientRepoImpl) FindRole(ctx context.Context, clientId int64, roleId in
 		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			kgsErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to find role", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to find role", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map role
@@ -487,10 +487,10 @@ func (c *ClientRepoImpl) FindRole(ctx context.Context, clientId int64, roleId in
 	entityRole.Permissions = entRole.Permissions
 
 	// Save role in cache
-	kgsErr := c.cache.SetObject(ctx, key, entityRole, 0)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr := c.cache.SetObject(ctx, key, entityRole, 0)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	return entityRole, nil

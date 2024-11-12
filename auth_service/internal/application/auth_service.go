@@ -42,9 +42,9 @@ func (s *AuthService) ClientAuth(ctx context.Context, req *auth.ClientAuthReques
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := s.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := s.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	defer func() {
@@ -67,9 +67,9 @@ func (s *AuthService) ClientAuth(ctx context.Context, req *auth.ClientAuthReques
 	}()
 
 	// Create client token
-	result, kgsErr := s.authService.CreateClientToken(ctx, req.ClientId)
-	if kgsErr != nil {
-		return nil, kgsErr
+	result, cusErr := s.authService.CreateClientToken(ctx, req.ClientId)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.AuthResponse{
@@ -120,9 +120,9 @@ func (s *AuthService) Login(ctx context.Context, req *auth.LoginRequest) (*auth.
 	// check if last login record is unusual
 	isUnusual, err := s.authService.IsLoginRecordUnusual(ctx, req.UserId, ipInfo, userAgentInfo)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to check login unusualness", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "Failed to check login unusualness", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// add new login record
@@ -158,9 +158,9 @@ func (s *AuthService) Login(ctx context.Context, req *auth.LoginRequest) (*auth.
 	}
 
 	if isUnusual {
-		kgsErr := cus_err.New(cus_err.UnusualLogin, fmt.Sprintf("Unusual login detected for user %d", req.UserId))
-		cus_otel.Warn(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.UnusualLogin, fmt.Sprintf("Unusual login detected for user %d", req.UserId))
+		cus_otel.Warn(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	return &auth.AuthResponse{
@@ -177,9 +177,9 @@ func (s *AuthService) ValidToken(ctx context.Context, req *auth.ValidTokenReques
 	res = &auth.ValidTokenResponse{}
 
 	// Validate token
-	payload, kgsErr := s.authService.ValidateToken(ctx, req.AccessToken)
-	if kgsErr != nil {
-		return nil, kgsErr
+	payload, cusErr := s.authService.ValidateToken(ctx, req.AccessToken)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	res.ClientId = payload.ClientId
@@ -191,12 +191,12 @@ func (s *AuthService) ValidToken(ctx context.Context, req *auth.ValidTokenReques
 		return res, nil
 	}
 
-	role, kgsErr := s.clientService.FindRole(ctx, payload.ClientId, *payload.RoleId)
-	if kgsErr != nil {
-		if cus_err.ResourceNotFound == kgsErr.Code().Int() {
+	role, cusErr := s.clientService.FindRole(ctx, payload.ClientId, *payload.RoleId)
+	if cusErr != nil {
+		if cus_err.ResourceNotFound == cusErr.Code().Int() {
 			return res, nil
 		}
-		return nil, kgsErr
+		return nil, cusErr
 	}
 
 	res.Role = &auth.Role{
