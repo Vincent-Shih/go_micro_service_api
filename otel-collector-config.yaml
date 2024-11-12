@@ -10,6 +10,16 @@ processors:
   batch:
     timeout: 1s
     send_batch_size: 1024
+  resource:
+    attributes:
+      - action: insert
+        key: loki.resource.labels
+        value: true
+  attributes:
+    actions:
+      - action: insert
+        key: loki.attribute.labels
+        value: true
 
 exporters:
   debug:
@@ -18,8 +28,28 @@ exporters:
     endpoint: http://tempo:4317
     tls:
       insecure: true
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    tls:
+      insecure: true
+    # tenant_id: "tenant1"
+    # format: json
+    # label_allowed_pattern: "^[a-zA-Z0-9_]+$"
+    # record_attributes:
+    #   - level
+    #   - event.name
+    # record_resources:
+    #   - service.name
+    #   - service.instance.id
+    # static_labels:
+    #   job: "otel-collector"
+    #   instance: "collector-1"
+
 
 service:
+  telemetry:
+    logs:
+      level: debug
   pipelines:
     traces:
       receivers: [otlp]
@@ -32,4 +62,4 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [loki, debug]

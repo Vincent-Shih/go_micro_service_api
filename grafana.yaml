@@ -61,10 +61,25 @@ services:
         aliases:
           - tempo
 
+# 添加 Promtail 服務
+  # promtail:
+  #   image: grafana/promtail:2.9.4
+  #   volumes:
+  #     - ./promtail-config.yaml:/etc/promtail/config.yml
+  #     - /var/log:/var/log
+  #     # 掛載 Docker 日誌目錄
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     # 掛載 Docker socket
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: -config.file=/etc/promtail/config.yml
+  #   networks:
+  #     loki_prom_network:
+  #       aliases:
+  #         - promtail
 
 # otel collector , we use this to collect the traces and metrics
   otel-collector:
-    image: otel/opentelemetry-collector:latest
+    image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
