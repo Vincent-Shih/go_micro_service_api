@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	tracerKey = "kgs-tracer"
-	meterKey  = "kgs-meter"
+	tracerKey = "cus-tracer"
+	meterKey  = "cus-meter"
 	role      = "server"
 )
 

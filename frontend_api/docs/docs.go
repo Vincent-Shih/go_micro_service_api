@@ -11,12 +11,12 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "KGS",
+            "name": "Sample",
             "url": "http://www.swagger.io/support",
-            "email": "vincent@kgs.tw"
+            "email": "vincent@cus.tw"
         },
         "license": {
-            "name": "Belong to KGS",
+            "name": "Belong to Sample",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "{{.Version}}"
@@ -710,8 +710,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "KGS Frontend API",
-	Description:      "This is the KGS Frontend API",
+	Title:            "Sample Frontend API",
+	Description:      "This is the Sample Frontend API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

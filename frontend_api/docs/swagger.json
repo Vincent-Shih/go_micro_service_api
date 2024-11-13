@@ -1,16 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is the KGS Frontend API",
-        "title": "KGS Frontend API",
+        "description": "This is the Sample Frontend API",
+        "title": "Sample Frontend API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "KGS",
+            "name": "Sample",
             "url": "http://www.swagger.io/support",
             "email": "vincent@cus.tw"
         },
         "license": {
-            "name": "Belong to KGS",
+            "name": "Belong to Sample",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "0.1"
