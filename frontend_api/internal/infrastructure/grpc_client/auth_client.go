@@ -155,7 +155,7 @@ func (a *AuthClient) ClientAuth(ctx context.Context, clientId int64) (*auth.Auth
 			cus_otel.Error(ctx, err.Error())
 			return nil, err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func (a *AuthClient) CreateUser(ctx context.Context, req *auth.CreateUserRequest
 			cus_otel.Error(ctx, err.Error())
 			return err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return err
 	}

@@ -132,17 +132,17 @@ func RateLimitMiddleware(serviceName string, redisClient *redis.Client, opts ...
 		// Increment the request count and set the expiration time
 		allowed, err := checkRateLimit(ctx, cfg, key)
 		if err != nil {
-			kgsErr := cus_err.New(cus_err.InternalServerError, err.Error())
-			cus_otel.Error(ctx, kgsErr.Error())
+			cusErr := cus_err.New(cus_err.InternalServerError, err.Error())
+			cus_otel.Error(ctx, cusErr.Error())
 			c.Abort()
 			return
 		}
 
 		// If the request count exceeds the limit, return a error
 		if !allowed {
-			kgsErr := cus_err.New(cus_err.TooManyRequests, "Rate limit exceeded")
-			cus_otel.Error(ctx, kgsErr.Error())
-			c.Errors = append(c.Errors, c.Error(kgsErr))
+			cusErr := cus_err.New(cus_err.TooManyRequests, "Rate limit exceeded")
+			cus_otel.Error(ctx, cusErr.Error())
+			c.Errors = append(c.Errors, c.Error(cusErr))
 			c.Abort()
 			return
 		}

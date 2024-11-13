@@ -43,9 +43,9 @@ func InitBroker(
 
 	ch, err := broker.OpenChannel()
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to create channel", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "Failed to create channel", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 	defer ch.Close()
 
@@ -56,25 +56,25 @@ func InitBroker(
 	// Create exchanges, queues and binds,when mapping is provided
 	for _, opt := range mapping.Exchanges {
 		if err := broker.CreateExchange(ch, opt.Name, opt.Kind, opt.Durable); err != nil {
-			kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to create exchange", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "Failed to create exchange", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 	}
 
 	for _, opt := range mapping.Queues {
 		if err := broker.CreateQueue(ch, opt.Name, opt.Durable); err != nil {
-			kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to create queue", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "Failed to create queue", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 	}
 
 	for _, opt := range mapping.Binds {
 		if err := broker.BindQueueToExchange(ch, opt.QueueName, opt.ExchangeName, opt.RoutingKey); err != nil {
-			kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to bind queue to exchange", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "Failed to bind queue to exchange", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 	}
 

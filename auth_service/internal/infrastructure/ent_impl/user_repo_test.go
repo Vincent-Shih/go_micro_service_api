@@ -49,8 +49,8 @@ func TestFindUser(t *testing.T) {
 		ctx := context.Background()
 
 		// Begin a transaction
-		ctx, kgsErr := userRepo.db.Begin(ctx)
-		require.Nil(t, kgsErr)
+		ctx, cusErr := userRepo.db.Begin(ctx)
+		require.Nil(t, cusErr)
 
 		tx, ok := userRepo.db.GetTx(ctx).(*ent.Tx)
 		require.True(t, ok)
@@ -92,17 +92,17 @@ func TestFindUser(t *testing.T) {
 			require.Nil(t, rollbackErr)
 		}()
 
-		user, kgsErr := userRepo.Find(ctx, testUser.ID)
+		user, cusErr := userRepo.Find(ctx, testUser.ID)
 
-		assert.Nil(t, kgsErr)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, user)
 		assert.Equal(t, testUser.ID, user.Id)
 		assert.Equal(t, testUser.Status, int(user.Status))
 		assert.Equal(t, testUser.Account, user.Account)
 		assert.Equal(t, testUser.Password, user.Password)
 
-		client, kgsErr := user.Client(ctx)
-		assert.Nil(t, kgsErr)
+		client, cusErr := user.Client(ctx)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, client)
 		assert.Equal(t, testClient.ID, client.Id)
 		assert.Equal(t, testClient.Active, client.Active)
@@ -120,11 +120,11 @@ func TestFindUser(t *testing.T) {
 			require.Nil(t, rollbackErr)
 		}()
 
-		user, kgsErr := userRepo.Find(ctx, 2)
+		user, cusErr := userRepo.Find(ctx, 2)
 
-		require.NotNil(t, kgsErr)
+		require.NotNil(t, cusErr)
 		require.Nil(t, user)
-		require.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		require.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 	})
 }
 
@@ -135,8 +135,8 @@ func TestCreateUser(t *testing.T) {
 		ctx := context.Background()
 
 		// Begin a transaction
-		ctx, kgsErr := userRepo.db.Begin(ctx)
-		require.Nil(t, kgsErr)
+		ctx, cusErr := userRepo.db.Begin(ctx)
+		require.Nil(t, cusErr)
 
 		tx, ok := userRepo.db.GetTx(ctx).(*ent.Tx)
 		require.True(t, ok)
@@ -185,16 +185,16 @@ func TestCreateUser(t *testing.T) {
 			Password: "password",
 		}
 
-		user, kgsErr := userRepo.Create(ctx, testClient.ID, user)
-		assert.Nil(t, kgsErr)
+		user, cusErr := userRepo.Create(ctx, testClient.ID, user)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, user)
 		assert.Equal(t, int64(2), user.Id)
 		assert.Equal(t, enum.UserStatusType.Active, user.Status)
 		assert.Equal(t, "testUser2", user.Account)
 		assert.Equal(t, "password", user.Password)
 
-		client, kgsErr := user.Client(ctx)
-		assert.Nil(t, kgsErr)
+		client, cusErr := user.Client(ctx)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, client)
 		assert.Equal(t, testClient.ID, client.Id)
 		assert.Equal(t, testClient.Active, client.Active)
@@ -215,10 +215,10 @@ func TestCreateUser(t *testing.T) {
 			Password: "password",
 		}
 
-		user, kgsErr := userRepo.Create(ctx, testClient.ID, user)
-		assert.NotNil(t, kgsErr)
+		user, cusErr := userRepo.Create(ctx, testClient.ID, user)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.InternalServerError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.InternalServerError, cusErr.Code().Int())
 	})
 
 	t.Run("CreateUser Duplicate Account", func(t *testing.T) {
@@ -235,10 +235,10 @@ func TestCreateUser(t *testing.T) {
 			Password: "password",
 		}
 
-		user, kgsErr := userRepo.Create(ctx, testClient.ID, user)
-		assert.NotNil(t, kgsErr)
+		user, cusErr := userRepo.Create(ctx, testClient.ID, user)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.InternalServerError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.InternalServerError, cusErr.Code().Int())
 	})
 
 	t.Run("CreateUser ClientNotFound", func(t *testing.T) {
@@ -255,10 +255,10 @@ func TestCreateUser(t *testing.T) {
 			Password: "password",
 		}
 
-		user, kgsErr := userRepo.Create(ctx, 2, user)
-		assert.NotNil(t, kgsErr)
+		user, cusErr := userRepo.Create(ctx, 2, user)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 	})
 }
 
@@ -269,8 +269,8 @@ func TestUpdateUser(t *testing.T) {
 		ctx := context.Background()
 
 		// Begin a transaction
-		ctx, kgsErr := userRepo.db.Begin(ctx)
-		require.Nil(t, kgsErr)
+		ctx, cusErr := userRepo.db.Begin(ctx)
+		require.Nil(t, cusErr)
 
 		tx, ok := userRepo.db.GetTx(ctx).(*ent.Tx)
 		require.True(t, ok)
@@ -319,16 +319,16 @@ func TestUpdateUser(t *testing.T) {
 			Password: "password2",
 		}
 
-		user, kgsErr := userRepo.Update(ctx, user)
-		assert.Nil(t, kgsErr)
+		user, cusErr := userRepo.Update(ctx, user)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, user)
 		assert.Equal(t, int64(1), user.Id)
 		assert.Equal(t, enum.UserStatusType.Locked, user.Status)
 		assert.Equal(t, "testUser2", user.Account)
 		assert.Equal(t, "password2", user.Password)
 
-		client, kgsErr := user.Client(ctx)
-		assert.Nil(t, kgsErr)
+		client, cusErr := user.Client(ctx)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, client)
 		assert.Equal(t, testClient.ID, client.Id)
 		assert.Equal(t, testClient.Active, client.Active)
@@ -349,10 +349,10 @@ func TestUpdateUser(t *testing.T) {
 			Password: "password2",
 		}
 
-		user, kgsErr := userRepo.Update(ctx, user)
-		assert.NotNil(t, kgsErr)
+		user, cusErr := userRepo.Update(ctx, user)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 
 	})
 
@@ -370,8 +370,8 @@ func TestUpdateUser(t *testing.T) {
 			Account:  "testUser2",
 			Password: "password2",
 		}
-		user, kgsErr := userRepo.Create(ctx, testClient.ID, user)
-		require.Nil(t, kgsErr)
+		user, cusErr := userRepo.Create(ctx, testClient.ID, user)
+		require.Nil(t, cusErr)
 		require.NotNil(t, user)
 		require.Equal(t, int64(2), user.Id)
 		require.Equal(t, enum.UserStatusType.Locked, user.Status)
@@ -379,10 +379,10 @@ func TestUpdateUser(t *testing.T) {
 
 		// Update with duplicate account
 		user.Account = testUser.Account
-		user, kgsErr = userRepo.Update(ctx, user)
-		assert.NotNil(t, kgsErr)
+		user, cusErr = userRepo.Update(ctx, user)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.InternalServerError, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.InternalServerError, cusErr.Code().Int())
 	})
 }
 
@@ -393,8 +393,8 @@ func TestAddLoginRecord(t *testing.T) {
 		ctx := context.Background()
 
 		// Begin a transaction
-		ctx, kgsErr := userRepo.db.Begin(ctx)
-		require.Nil(t, kgsErr)
+		ctx, cusErr := userRepo.db.Begin(ctx)
+		require.Nil(t, cusErr)
 
 		tx, ok := userRepo.db.GetTx(ctx).(*ent.Tx)
 		require.True(t, ok)
@@ -445,8 +445,8 @@ func TestAddLoginRecord(t *testing.T) {
 			IsSuccess: true,
 		}
 
-		createdRecord, kgsErr := userRepo.AddLoginRecord(ctx, testUser.ID, loginRecord)
-		assert.Nil(t, kgsErr)
+		createdRecord, cusErr := userRepo.AddLoginRecord(ctx, testUser.ID, loginRecord)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, loginRecord)
 		assert.Equal(t, createdRecord.Browser, loginRecord.Browser)
 		assert.Equal(t, createdRecord.Ip, loginRecord.Ip)
@@ -464,8 +464,8 @@ func TestBindRole(t *testing.T) {
 		ctx := context.Background()
 
 		// Begin a transaction
-		ctx, kgsErr := userRepo.db.Begin(ctx)
-		require.Nil(t, kgsErr)
+		ctx, cusErr := userRepo.db.Begin(ctx)
+		require.Nil(t, cusErr)
 
 		tx, ok := userRepo.db.GetTx(ctx).(*ent.Tx)
 		require.True(t, ok)
@@ -525,8 +525,8 @@ func TestBindRole(t *testing.T) {
 		}()
 
 		// Bind role
-		user, kgsErr := userRepo.BindRole(ctx, testUser.ID, testRole.ID)
-		assert.Nil(t, kgsErr)
+		user, cusErr := userRepo.BindRole(ctx, testUser.ID, testRole.ID)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, user)
 		assert.Equal(t, testUser.ID, user.Id)
 		assert.Equal(t, testUser.Account, user.Account)
@@ -535,8 +535,8 @@ func TestBindRole(t *testing.T) {
 		assert.Equal(t, testUser.PasswordFailTimes, user.PasswordFailTimes)
 
 		// Get user role
-		role, kgsErr := user.Role(ctx)
-		assert.Nil(t, kgsErr)
+		role, cusErr := user.Role(ctx)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, role)
 		assert.Equal(t, role.Id, testRole.ID)
 		assert.Equal(t, role.Name, testRole.Name)
@@ -544,13 +544,13 @@ func TestBindRole(t *testing.T) {
 		assert.Equal(t, role.IsSystem(), testRole.IsSystem)
 
 		// Bind other role
-		user, kgsErr = userRepo.BindRole(ctx, testUser.ID, 1)
-		assert.Nil(t, kgsErr)
+		user, cusErr = userRepo.BindRole(ctx, testUser.ID, 1)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, user)
 
 		// Get user role
-		role, kgsErr = user.Role(ctx)
-		assert.Nil(t, kgsErr)
+		role, cusErr = user.Role(ctx)
+		assert.Nil(t, cusErr)
 		assert.NotNil(t, role)
 		assert.Equal(t, role.Id, entity.FrontendRoles.Guest.Id)
 		assert.Equal(t, role.Name, entity.FrontendRoles.Guest.Name)
@@ -566,9 +566,9 @@ func TestBindRole(t *testing.T) {
 		}()
 
 		// Bind role
-		user, kgsErr := userRepo.BindRole(ctx, testUser.ID, 9999)
-		assert.NotNil(t, kgsErr)
+		user, cusErr := userRepo.BindRole(ctx, testUser.ID, 9999)
+		assert.NotNil(t, cusErr)
 		assert.Nil(t, user)
-		assert.Equal(t, cus_err.ResourceNotFound, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.ResourceNotFound, cusErr.Code().Int())
 	})
 }

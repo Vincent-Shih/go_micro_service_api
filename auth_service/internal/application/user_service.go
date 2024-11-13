@@ -29,9 +29,9 @@ func (u *UserService) CreateUser(ctx context.Context, req *auth.CreateUserReques
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := u.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := u.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	defer func() {
@@ -54,10 +54,10 @@ func (u *UserService) CreateUser(ctx context.Context, req *auth.CreateUserReques
 	}()
 
 	// Convert user status
-	userStatus, kgsErr := enum.UserStatusFromInt(int(req.Status))
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	userStatus, cusErr := enum.UserStatusFromInt(int(req.Status))
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	userInfo := vo.UserInfo{
@@ -68,9 +68,9 @@ func (u *UserService) CreateUser(ctx context.Context, req *auth.CreateUserReques
 	}
 
 	// Create user
-	_, kgsErr = u.userService.CreateUser(ctx, req.ClientId, userInfo)
-	if kgsErr != nil {
-		return nil, kgsErr
+	_, cusErr = u.userService.CreateUser(ctx, req.ClientId, userInfo)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.Empty{}, nil
@@ -82,9 +82,9 @@ func (u *UserService) UpdateUser(ctx context.Context, req *auth.UpdateUserReques
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := u.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := u.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	defer func() {
@@ -107,10 +107,10 @@ func (u *UserService) UpdateUser(ctx context.Context, req *auth.UpdateUserReques
 	}()
 
 	// Convert user status
-	userStatus, kgsErr := enum.UserStatusFromInt(int(req.Status))
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	userStatus, cusErr := enum.UserStatusFromInt(int(req.Status))
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	userInfo := vo.UserInfo{
@@ -121,9 +121,9 @@ func (u *UserService) UpdateUser(ctx context.Context, req *auth.UpdateUserReques
 	}
 
 	// Update user
-	_, kgsErr = u.userService.UpdateUser(ctx, userInfo)
-	if kgsErr != nil {
-		return nil, kgsErr
+	_, cusErr = u.userService.UpdateUser(ctx, userInfo)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.Empty{}, nil
@@ -135,9 +135,9 @@ func (u *UserService) CheckAccountExistence(ctx context.Context, req *auth.Accou
 	defer span.End()
 
 	// Check account existence
-	exist, kgsErr := u.userService.CheckAccountExistence(ctx, req.Account)
-	if kgsErr != nil {
-		return nil, kgsErr
+	exist, cusErr := u.userService.CheckAccountExistence(ctx, req.Account)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.ExistenceResponse{

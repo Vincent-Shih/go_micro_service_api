@@ -86,10 +86,10 @@ func (s *Service) GetLocation(ctx context.Context, ip string) (*GetLocationRespo
 	cus_otel.TraceRestyResponse(ctx, "nordvpn client trace info", url, resp)
 
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError,
+		cusErr := cus_err.New(cus_err.InternalServerError,
 			fmt.Sprintf("Search ip: %s ,Occur error", ip), err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return result, kgsErr
+		cus_otel.Error(ctx, cusErr.Error())
+		return result, cusErr
 	}
 
 	return result, nil

@@ -70,7 +70,7 @@ func (a *UserClient) CreateProfile(ctx context.Context, req *user.CreateProfileR
 			cus_otel.Error(ctx, err.Error())
 			return &user.CreateProfileResponse{}, err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return &user.CreateProfileResponse{}, err
 	}
@@ -95,7 +95,7 @@ func (a *UserClient) FindProfile(ctx context.Context, req *user.GetProfileReques
 			cus_otel.Error(ctx, err.Error())
 			return &user.GetProfileResponse{}, err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return &user.GetProfileResponse{}, err
 	}
@@ -114,7 +114,7 @@ func (a *UserClient) RegisterVerification(ctx context.Context, req *user.Registe
 			cus_otel.Error(ctx, err.Error())
 			return &user.RegisterVerificationResponse{}, err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return &user.RegisterVerificationResponse{}, err
 	}
@@ -139,7 +139,7 @@ func (a *UserClient) Verification(ctx context.Context, req *user.VerificationReq
 			cus_otel.Error(ctx, err.Error())
 			return &user.VerificationResponse{}, err
 		}
-		err := cus_err.New(cus_err.InternalServerError, "can't found the kgsErr from grpcErr", grpcErr)
+		err := cus_err.New(cus_err.InternalServerError, "can't found the cusErr from grpcErr", grpcErr)
 		cus_otel.Error(ctx, err.Error())
 		return &user.VerificationResponse{}, err
 	}

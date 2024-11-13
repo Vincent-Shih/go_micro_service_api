@@ -30,9 +30,9 @@ func errorHandler() gin.HandlerFunc {
 			return
 		}
 
-		kgsErr, ok := err.Err.(*cus_err.CusError)
+		cusErr, ok := err.Err.(*cus_err.CusError)
 		if ok {
-			c.Status(kgsErr.HttpCode())
+			c.Status(cusErr.HttpCode())
 			return
 		} else {
 			c.Status(http.StatusInternalServerError)

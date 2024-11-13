@@ -57,16 +57,16 @@ func (e *EntDB) GetClient(ctx context.Context) any {
 func (e *EntDB) Begin(ctx context.Context) (context.Context, *cus_err.CusError) {
 	// Check if ent client is initialized
 	if e.client == nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "ent client not found", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "ent client not found", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	tx, err := e.client.Tx(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to start transaction", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to start transaction", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 	return context.WithValue(ctx, txKey{}, tx), nil
 }
@@ -74,15 +74,15 @@ func (e *EntDB) Begin(ctx context.Context) (context.Context, *cus_err.CusError) 
 func (e *EntDB) Commit(ctx context.Context) (context.Context, *cus_err.CusError) {
 	tx, ok := ctx.Value(txKey{}).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return ctx, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return ctx, cusErr
 	}
 
 	if err := tx.Commit(); err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to commit transaction", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return ctx, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to commit transaction", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return ctx, cusErr
 	}
 
 	return context.WithValue(ctx, txKey{}, nil), nil
@@ -91,15 +91,15 @@ func (e *EntDB) Commit(ctx context.Context) (context.Context, *cus_err.CusError)
 func (e *EntDB) Rollback(ctx context.Context) (context.Context, *cus_err.CusError) {
 	tx, ok := ctx.Value(txKey{}).(*ent.Tx)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return ctx, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "transaction not found in context", nil)
+		cus_otel.Error(ctx, cusErr.Error())
+		return ctx, cusErr
 	}
 
 	if err := tx.Rollback(); err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to rollback transaction", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return ctx, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to rollback transaction", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return ctx, cusErr
 	}
 
 	return context.WithValue(ctx, txKey{}, nil), nil

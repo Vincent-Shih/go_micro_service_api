@@ -70,18 +70,18 @@ func Guard(opts ...PermOption) gin.HandlerFunc {
 		// Get the user information from the context
 		userInfo, ok := GetUserInfo(c)
 		if !ok {
-			kgsErr := cus_err.New(cus_err.InternalServerError, "failed to get user info from gin.")
-			cus_otel.Error(ctx, kgsErr.Error())
-			_ = c.Error(kgsErr)
+			cusErr := cus_err.New(cus_err.InternalServerError, "failed to get user info from gin.")
+			cus_otel.Error(ctx, cusErr.Error())
+			_ = c.Error(cusErr)
 			c.Abort()
 			return
 		}
 
 		// Check if the user has the required permissions
 		if len(cfg.needPerms) > 0 && !userInfo.HasPermission(cfg.needPerms...) {
-			kgsErr := cus_err.New(cus_err.NoPermission, "user does not have the required permissions.")
-			cus_otel.Error(ctx, kgsErr.Error())
-			_ = c.Error(kgsErr)
+			cusErr := cus_err.New(cus_err.NoPermission, "user does not have the required permissions.")
+			cus_otel.Error(ctx, cusErr.Error())
+			_ = c.Error(cusErr)
 			c.Abort()
 			return
 		}

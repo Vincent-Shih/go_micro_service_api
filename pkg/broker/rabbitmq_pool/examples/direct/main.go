@@ -55,9 +55,9 @@ func main() {
 	}
 
 	// Create a new broker
-	broker, kgsErr := rabbitmq.NewBroker(user, pass, host, port, rabbitmq.WithMapping(m))
-	if kgsErr != nil {
-		log.Fatalf("Failed to create broker: %v", kgsErr)
+	broker, cusErr := rabbitmq.NewBroker(user, pass, host, port, rabbitmq.WithMapping(m))
+	if cusErr != nil {
+		log.Fatalf("Failed to create broker: %v", cusErr)
 	}
 	defer broker.Close()
 
@@ -115,9 +115,9 @@ func produce(ctx context.Context, broker rabbitmq.Broker) {
 func high_consume(ctx context.Context, broker rabbitmq.Broker, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	d, kgsErr := broker.Consume(ctx, "Consumer1", "notification_priority_high")
-	if kgsErr != nil {
-		log.Fatalf("Failed to consume message: %v", kgsErr)
+	d, cusErr := broker.Consume(ctx, "Consumer1", "notification_priority_high")
+	if cusErr != nil {
+		log.Fatalf("Failed to consume message: %v", cusErr)
 	}
 
 	for {
@@ -141,9 +141,9 @@ func high_consume(ctx context.Context, broker rabbitmq.Broker, wg *sync.WaitGrou
 func low_consume(ctx context.Context, broker rabbitmq.Broker, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	d, kgsErr := broker.Consume(ctx, "Consumer2", "notification_priority_low")
-	if kgsErr != nil {
-		log.Fatalf("Failed to consume message: %v", kgsErr)
+	d, cusErr := broker.Consume(ctx, "Consumer2", "notification_priority_low")
+	if cusErr != nil {
+		log.Fatalf("Failed to consume message: %v", cusErr)
 	}
 
 	for {

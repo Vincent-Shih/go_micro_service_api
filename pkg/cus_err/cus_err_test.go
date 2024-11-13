@@ -53,11 +53,11 @@ func TestNewCusError(t *testing.T) {
 // TestCusErrorError tests the Error method of CusError
 func TestCusErrorError(t *testing.T) {
 	err := New(AccountError, "test error")
-	assert.Equal(t, "kgsCode: 4000000, msg:test error", err.Error())
+	assert.Equal(t, "cusCode: 4000000, msg:test error", err.Error())
 
 	sourceErr := errors.New("source error")
 	err = New(AccountError, "test error", sourceErr)
-	assert.Equal(t, "kgsCode: 4000000, msg:test error,  sources: [source error]", err.Error())
+	assert.Equal(t, "cusCode: 4000000, msg:test error,  sources: [source error]", err.Error())
 }
 
 // TestCusErrorHttpCode tests the HttpCode method of CusError
@@ -117,13 +117,13 @@ func TestFromGrpcErr(t *testing.T) {
 			name: "gRPC error with CusErrorProto",
 			err: func() error {
 				st := status.New(codes.Internal, "internal error")
-				kgsProto, _ := (&CusError{
+				cusProto, _ := (&CusError{
 					code:    500,
 					msg:     "test error",
 					data:    map[string]interface{}{"key": "value"},
 					sources: []error{errors.New("source error")},
 				}).toProto()
-				st, _ = st.WithDetails(kgsProto)
+				st, _ = st.WithDetails(cusProto)
 				return st.Err()
 			}(),
 			wantErr: &CusError{

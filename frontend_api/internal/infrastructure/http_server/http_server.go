@@ -93,14 +93,14 @@ func NewHttpServer(
 // It supports both TLS and non-TLS modes based on the configuration.
 func startService(ctx context.Context, r *gin.Engine, cfg *config.Config) {
 	if cfg.Host.EnableTLS {
-		crtPath, kgsErr := absPath(cfg.Host.CertFilePath)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
+		crtPath, cusErr := absPath(cfg.Host.CertFilePath)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
 			return
 		}
-		keyPath, kgsErr := absPath(cfg.Host.KeyFilePath)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
+		keyPath, cusErr := absPath(cfg.Host.KeyFilePath)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
 			return
 		}
 		if err := r.RunTLS(cfg.ServiceUrl, crtPath, keyPath); err != nil {
@@ -121,8 +121,8 @@ func absPath(path string) (string, *cus_err.CusError) {
 
 	workDir, err := os.Getwd()
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to get current working directory", err)
-		return "", kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to get current working directory", err)
+		return "", cusErr
 	}
 
 	absPath := filepath.Join(workDir, path)

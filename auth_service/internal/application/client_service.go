@@ -30,9 +30,9 @@ func (c *ClientService) CreateClient(ctx context.Context, req *auth.CreateClient
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := c.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := c.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer func() {
 		// If there is an error, rollback the transaction
@@ -54,9 +54,9 @@ func (c *ClientService) CreateClient(ctx context.Context, req *auth.CreateClient
 	}()
 
 	// Convert client type
-	clientType, kgsErr := enum.ClientTypeFromId(int(req.ClientType))
-	if kgsErr != nil {
-		return nil, kgsErr
+	clientType, cusErr := enum.ClientTypeFromId(int(req.ClientType))
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	// Map request to client info
@@ -70,9 +70,9 @@ func (c *ClientService) CreateClient(ctx context.Context, req *auth.CreateClient
 	}
 
 	// Create client
-	_, kgsErr = c.clientService.CreateClient(ctx, clientInfo)
-	if kgsErr != nil {
-		return nil, kgsErr
+	_, cusErr = c.clientService.CreateClient(ctx, clientInfo)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.Empty{}, nil
@@ -84,9 +84,9 @@ func (c *ClientService) UpdateClient(ctx context.Context, req *auth.UpdateClient
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := c.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := c.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer func() {
 		// If there is an error, rollback the transaction
@@ -116,9 +116,9 @@ func (c *ClientService) UpdateClient(ctx context.Context, req *auth.UpdateClient
 	}
 
 	// Update client
-	_, kgsErr = c.clientService.UpdateClient(ctx, clientInfo)
-	if kgsErr != nil {
-		return nil, kgsErr
+	_, cusErr = c.clientService.UpdateClient(ctx, clientInfo)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.Empty{}, nil
@@ -130,9 +130,9 @@ func (c *ClientService) CreateRole(ctx context.Context, req *auth.CreateRoleRequ
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := c.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := c.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer func() {
 		// If there is an error, rollback the transaction
@@ -156,10 +156,10 @@ func (c *ClientService) CreateRole(ctx context.Context, req *auth.CreateRoleRequ
 	// Get permissions
 	perms := make([]enum.Permission, 0)
 	for _, id := range req.PermIds {
-		perm, kgsErr := enum.PermissionById(id)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		perm, cusErr := enum.PermissionById(id)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 		perms = append(perms, perm)
 	}
@@ -171,9 +171,9 @@ func (c *ClientService) CreateRole(ctx context.Context, req *auth.CreateRoleRequ
 	}
 
 	// Create role
-	createdRoles, kgsErr := c.clientService.CreateRoles(ctx, req.ClientId, role)
-	if kgsErr != nil {
-		return nil, kgsErr
+	createdRoles, cusErr := c.clientService.CreateRoles(ctx, req.ClientId, role)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	// Map role to response
@@ -194,9 +194,9 @@ func (c *ClientService) UpdateRole(ctx context.Context, req *auth.UpdateRoleRequ
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := c.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := c.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer func() {
 		// If there is an error, rollback the transaction
@@ -220,10 +220,10 @@ func (c *ClientService) UpdateRole(ctx context.Context, req *auth.UpdateRoleRequ
 	// Get permissions
 	perms := make([]enum.Permission, 0)
 	for _, id := range req.PermIds {
-		perm, kgsErr := enum.PermissionById(id)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		perm, cusErr := enum.PermissionById(id)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 		perms = append(perms, perm)
 	}
@@ -236,9 +236,9 @@ func (c *ClientService) UpdateRole(ctx context.Context, req *auth.UpdateRoleRequ
 	}
 
 	// Update role
-	updatedRoles, kgsErr := c.clientService.UpdateRoles(ctx, req.ClientId, role)
-	if kgsErr != nil {
-		return nil, kgsErr
+	updatedRoles, cusErr := c.clientService.UpdateRoles(ctx, req.ClientId, role)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	// Map role to response
@@ -259,9 +259,9 @@ func (c *ClientService) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequ
 	defer span.End()
 
 	// Begin transaction
-	ctx, kgsErr := c.db.Begin(ctx)
-	if kgsErr != nil {
-		return nil, kgsErr
+	ctx, cusErr := c.db.Begin(ctx)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer func() {
 		// If there is an error, rollback the transaction
@@ -283,9 +283,9 @@ func (c *ClientService) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequ
 	}()
 
 	// Delete role
-	kgsErr = c.clientService.DeleteRoles(ctx, req.ClientId, req.RoleId)
-	if kgsErr != nil {
-		return nil, kgsErr
+	cusErr = c.clientService.DeleteRoles(ctx, req.ClientId, req.RoleId)
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return &auth.Empty{}, nil

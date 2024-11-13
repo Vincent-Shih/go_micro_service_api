@@ -12,14 +12,13 @@ import (
 	"go.uber.org/fx"
 )
 
-// @title           KGS Frontend API
+// @title           Sample Frontend API
 // @version         0.1
-// @description     This is the KGS Frontend API
+// @description     This is the Sample Frontend API
 // @termsOfService  http://swagger.io/terms/
-// @contact.name    KGS
+// @contact.name    Sample
 // @contact.url     http://www.swagger.io/support
-// @contact.email   vincent@kgs.tw
-// @license.name    Belong to KGS
+// @license.name    Belong to Sample
 // @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
 // @BasePath        /api
 // @securityDefinitions.apikey Bearer

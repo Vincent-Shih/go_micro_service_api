@@ -217,9 +217,9 @@ func (a *AuthService) Login(ctx context.Context, token string, userId int64, pas
 	// Delete old token from cache
 	loginErr = a.cache.Delete(ctx, key)
 	if loginErr != nil {
-		kgsErr := cus_err.New(cus_err.TokenExpired, "Token is expired", loginErr)
-		cus_otel.Error(ctx, kgsErr.Error())
-		loginErr = kgsErr
+		cusErr := cus_err.New(cus_err.TokenExpired, "Token is expired", loginErr)
+		cus_otel.Error(ctx, cusErr.Error())
+		loginErr = cusErr
 		return nil, loginErr
 	}
 
@@ -347,9 +347,9 @@ func (a *AuthService) IsLoginRecordUnusual(
 	// get last login record
 	lastRecord, err := a.userRepo.GetLastLoginRecord(ctx, userId)
 	if err != nil && err.Code().Int() != cus_err.ResourceNotFound {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "Failed to get last login record", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return false, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "Failed to get last login record", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return false, cusErr
 	}
 
 	// and check if the login is unusual

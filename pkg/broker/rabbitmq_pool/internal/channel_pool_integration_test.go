@@ -111,8 +111,8 @@ func TestChannelPool_Get(t *testing.T) {
 		pool.Put(ch1)
 
 		// Close the pool
-		kgsErr := pool.Close()
-		require.Nil(t, kgsErr)
+		cusErr := pool.Close()
+		require.Nil(t, cusErr)
 
 		// Get channel after close should not return any channel
 		ch, err := pool.Get()

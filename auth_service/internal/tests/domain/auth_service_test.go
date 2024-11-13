@@ -127,8 +127,8 @@ func TestCreateClientToken(t *testing.T) {
 		copyClient.Active = false
 
 		// Update the client
-		_, kgsErr := clientRepo.Update(ctx, copyClient)
-		require.Nil(t, kgsErr)
+		_, cusErr := clientRepo.Update(ctx, copyClient)
+		require.Nil(t, cusErr)
 
 		token, err := authService.CreateClientToken(ctx, clientInfo.Id)
 		assert.Empty(t, token)

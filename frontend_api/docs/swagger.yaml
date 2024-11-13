@@ -162,14 +162,14 @@ definitions:
 info:
   contact:
     email: vincent@cus.tw
-    name: KGS
+    name: Sample
     url: http://www.swagger.io/support
-  description: This is the KGS Frontend API
+  description: This is the Sample Frontend API
   license:
-    name: Belong to KGS
+    name: Belong to Sample
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: KGS Frontend API
+  title: Sample Frontend API
   version: "0.1"
 paths:
   /v1/auth/:

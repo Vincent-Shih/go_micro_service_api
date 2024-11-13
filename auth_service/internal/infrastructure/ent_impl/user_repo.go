@@ -48,20 +48,20 @@ func (u *UserRepoImpl) Find(ctx context.Context, id int64) (*aggregate.User, *cu
 		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			kgsErr := cus_err.New(cus_err.ResourceNotFound, "user not found", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.ResourceNotFound, "user not found", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
-		kgsErr := cus_err.New(cus_err.InternalServerError, "find user failed", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "find user failed", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to enum.UserStatus
-	status, kgsErr := enum.UserStatusFromInt(entUser.Status)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	status, cusErr := enum.UserStatusFromInt(entUser.Status)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to aggregate.User
@@ -90,18 +90,18 @@ func (u *UserRepoImpl) Create(ctx context.Context, clientId int64, user *aggrega
 	}
 
 	// Validate parameters
-	kgsErr := u.validateParameters(user)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr := u.validateParameters(user)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Check the client is exist
 	_, err := tx.AuthClient.Get(ctx, clientId)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Create user
@@ -114,21 +114,21 @@ func (u *UserRepoImpl) Create(ctx context.Context, clientId int64, user *aggrega
 		SetAuthClientsID(clientId).
 		Save(ctx)
 	if ent.IsConstraintError(err) && strings.Contains(err.Error(), "duplicate") {
-		kgsErr := cus_err.New(cus_err.ResourceIsExist, "user already exists", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.ResourceIsExist, "user already exists", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "create user failed", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "create user failed", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to enum.UserStatus
-	status, kgsErr := enum.UserStatusFromInt(entUser.Status)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	status, cusErr := enum.UserStatusFromInt(entUser.Status)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to aggregate.User
@@ -158,10 +158,10 @@ func (u *UserRepoImpl) Update(ctx context.Context, user *aggregate.User) (*aggre
 		return nil, err
 	}
 
-	kgsErr := u.validateParameters(user)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	cusErr := u.validateParameters(user)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Update user
@@ -172,20 +172,20 @@ func (u *UserRepoImpl) Update(ctx context.Context, user *aggregate.User) (*aggre
 		Save(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			kgsErr := cus_err.New(cus_err.ResourceNotFound, "user not found", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.ResourceNotFound, "user not found", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
-		kgsErr := cus_err.New(cus_err.InternalServerError, "update user failed", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "update user failed", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to enum.UserStatus
-	status, kgsErr := enum.UserStatusFromInt(entUser.Status)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	status, cusErr := enum.UserStatusFromInt(entUser.Status)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to aggregate.User
@@ -231,9 +231,9 @@ func (u *UserRepoImpl) AddLoginRecord(ctx context.Context, userId int64, loginRe
 		SetUsersID(userId).
 		Save(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "create login record failed", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "create login record failed", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to entity.LoginRecord
@@ -271,24 +271,24 @@ func (u *UserRepoImpl) BindRole(ctx context.Context, userId int64, roleId int64)
 	// Check the role is exist
 	role, err := tx.Role.Get(ctx, roleId)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.ResourceNotFound, "role is not found", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.ResourceNotFound, "role is not found", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Bind role to user
 	entUser, err := tx.User.UpdateOneID(userId).SetRoles(role).Save(ctx)
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.InternalServerError, "binding role failed", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "binding role failed", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to enum.UserStatus
-	status, kgsErr := enum.UserStatusFromInt(entUser.Status)
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+	status, cusErr := enum.UserStatusFromInt(entUser.Status)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to aggregate.User
@@ -344,13 +344,13 @@ func setUserLoader(db db.Database, domainUser *aggregate.User) {
 			First(ctx)
 		if err != nil {
 			if ent.IsNotFound(err) {
-				kgsErr := cus_err.New(cus_err.ResourceNotFound, "login record not found", err)
-				cus_otel.Error(ctx, kgsErr.Error())
-				return nil, kgsErr
+				cusErr := cus_err.New(cus_err.ResourceNotFound, "login record not found", err)
+				cus_otel.Error(ctx, cusErr.Error())
+				return nil, cusErr
 			}
-			kgsErr := cus_err.New(cus_err.InternalServerError, "find last login record failed", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "find last login record failed", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
 		// Map to entity.LoginRecord.
@@ -388,20 +388,20 @@ func setUserLoader(db db.Database, domainUser *aggregate.User) {
 			Only(ctx)
 		if err != nil {
 			if ent.IsNotFound(err) {
-				kgsErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
-				cus_otel.Error(ctx, kgsErr.Error())
-				return nil, kgsErr
+				cusErr := cus_err.New(cus_err.ResourceNotFound, "role not found", err)
+				cus_otel.Error(ctx, cusErr.Error())
+				return nil, cusErr
 			}
-			kgsErr := cus_err.New(cus_err.InternalServerError, "find role failed", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "find role failed", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
 		// Map to entity.Role
-		clientType, kgsErr := enum.ClientTypeFromId(entRole.ClientType)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		clientType, cusErr := enum.ClientTypeFromId(entRole.ClientType)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 		return &entity.Role{
 			Id:          entRole.ID,
@@ -434,20 +434,20 @@ func setUserLoader(db db.Database, domainUser *aggregate.User) {
 			Only(ctx)
 		if err != nil {
 			if ent.IsNotFound(err) {
-				kgsErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
-				cus_otel.Error(ctx, kgsErr.Error())
-				return nil, kgsErr
+				cusErr := cus_err.New(cus_err.ResourceNotFound, "client not found", err)
+				cus_otel.Error(ctx, cusErr.Error())
+				return nil, cusErr
 			}
-			kgsErr := cus_err.New(cus_err.InternalServerError, "find client failed", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, "find client failed", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
 		// Map to aggregate.Client
-		clientType, kgsErr := enum.ClientTypeFromId(entClient.ClientType)
-		if kgsErr != nil {
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+		clientType, cusErr := enum.ClientTypeFromId(entClient.ClientType)
+		if cusErr != nil {
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 		domainClient := &aggregate.Client{
 			Id:               entClient.ID,
@@ -505,15 +505,15 @@ func (u *UserRepoImpl) GetLastLoginRecord(ctx context.Context, userId int64) (*e
 		First(ctx)
 
 	if err != nil {
-		var kgsErr *cus_err.CusError
+		var cusErr *cus_err.CusError
 		if ent.IsNotFound(err) {
-			kgsErr = cus_err.New(cus_err.ResourceNotFound, "last login record not found", err)
+			cusErr = cus_err.New(cus_err.ResourceNotFound, "last login record not found", err)
 		} else {
-			kgsErr = cus_err.New(cus_err.InternalServerError, "find last login record failed", err)
+			cusErr = cus_err.New(cus_err.InternalServerError, "find last login record failed", err)
 		}
 
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	// Map to entity.LoginRecord

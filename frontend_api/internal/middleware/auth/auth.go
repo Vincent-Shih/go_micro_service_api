@@ -137,9 +137,9 @@ func AuthMiddleware(oauthClient AuthClient, opts ...Option) gin.HandlerFunc {
 
 		// If the token is empty, return an error
 		if token == "" {
-			kgsErr := cus_err.New(cus_err.MissingAccessToken, "Access token not found in header", nil)
-			cus_otel.Warn(c.Request.Context(), kgsErr.Error())
-			_ = c.Error(kgsErr)
+			cusErr := cus_err.New(cus_err.MissingAccessToken, "Access token not found in header", nil)
+			cus_otel.Warn(c.Request.Context(), cusErr.Error())
+			_ = c.Error(cusErr)
 			c.Abort()
 			return
 		}
@@ -153,9 +153,9 @@ func AuthMiddleware(oauthClient AuthClient, opts ...Option) gin.HandlerFunc {
 			return
 		}
 		if userInfo == nil {
-			kgsErr := cus_err.New(cus_err.InternalServerError, "UserInfo is nil")
-			cus_otel.Warn(c.Request.Context(), kgsErr.Error())
-			_ = c.Error(kgsErr)
+			cusErr := cus_err.New(cus_err.InternalServerError, "UserInfo is nil")
+			cus_otel.Warn(c.Request.Context(), cusErr.Error())
+			_ = c.Error(cusErr)
 			c.Abort()
 			return
 		}

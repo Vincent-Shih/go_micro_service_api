@@ -101,11 +101,11 @@ func TestCreateUser(t *testing.T) {
 		}
 
 		res, err := userApp.CreateUser(ctx, req)
-		kgsErr, ok := err.(*cus_err.CusError)
+		cusErr, ok := err.(*cus_err.CusError)
 		require.NotNil(t, err)
 		require.Nil(t, res)
 		require.True(t, ok)
-		require.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		require.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 
 	t.Run("Create user with invalid account", func(t *testing.T) {
@@ -215,10 +215,10 @@ func TestUpdateUser(t *testing.T) {
 		}
 
 		res, err := userApp.UpdateUser(ctx, req)
-		kgsErr, ok := err.(*cus_err.CusError)
+		cusErr, ok := err.(*cus_err.CusError)
 		require.NotNil(t, err)
 		require.Nil(t, res)
 		require.True(t, ok)
-		require.Equal(t, cus_err.AccountPasswordError, kgsErr.Code().Int())
+		require.Equal(t, cus_err.AccountPasswordError, cusErr.Code().Int())
 	})
 }

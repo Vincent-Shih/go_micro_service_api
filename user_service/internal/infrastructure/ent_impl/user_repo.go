@@ -69,14 +69,14 @@ func (repo *UserRepo) GetProfile(ctx context.Context, u *aggregate.User, keys []
 	instances, err := client.Profile.Query().Where(profile.UserIDEQ(int(u.ID))).Where(profile.KeyIn(keys...)).All(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			kgsErr := cus_err.New(cus_err.ResourceNotFound, "profile not found", err)
-			cus_otel.Error(ctx, kgsErr.Error())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.ResourceNotFound, "profile not found", err)
+			cus_otel.Error(ctx, cusErr.Error())
+			return nil, cusErr
 		}
 
-		kgsErr := cus_err.New(cus_err.InternalServerError, "failed to get profile", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, "failed to get profile", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		return nil, cusErr
 	}
 
 	for _, instance := range instances {

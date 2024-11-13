@@ -207,10 +207,10 @@ func TestLogin(t *testing.T) {
 		}
 
 		res, err := authApp.Login(ctx, req)
-		kgsErr := err.(*cus_err.CusError)
+		cusErr := err.(*cus_err.CusError)
 		assert.NotNil(t, err)
 		assert.Nil(t, res)
-		assert.Equal(t, cus_err.WrongPassword, kgsErr.Code().Int())
+		assert.Equal(t, cus_err.WrongPassword, cusErr.Code().Int())
 	})
 }
 

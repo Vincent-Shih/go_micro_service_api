@@ -87,8 +87,8 @@ func TestEntDB_Commit(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Start a transaction for the entire test
-	ctx, kgsErr := db.Begin(ctx)
-	assert.Nil(t, kgsErr)
+	ctx, cusErr := db.Begin(ctx)
+	assert.Nil(t, cusErr)
 
 	// Get transaction from context
 	tx := db.GetTx(ctx).(*ent.Tx)
@@ -115,8 +115,8 @@ func TestEntDB_Commit(t *testing.T) {
 	require.Nil(t, err)
 
 	// Commit the transaction
-	ctx, kgsErr = db.Commit(ctx)
-	assert.Nil(t, kgsErr)
+	ctx, cusErr = db.Commit(ctx)
+	assert.Nil(t, cusErr)
 
 	// Check if the user was created
 	user, err := client.User.Query().Where(user.PasswordEQ("test")).WithAuthClients().Only(ctx)
@@ -152,8 +152,8 @@ func TestEntDB_Rollback(t *testing.T) {
 	require.Nil(t, e)
 
 	//  Start transaction
-	ctx, kgsErr := db.Begin(ctx)
-	assert.Nil(t, kgsErr)
+	ctx, cusErr := db.Begin(ctx)
+	assert.Nil(t, cusErr)
 
 	// Get transaction from context
 	tx := db.GetTx(ctx).(*ent.Tx)

@@ -44,9 +44,9 @@ func (v *VerifyHandler) RegisterVerification(c *gin.Context) {
 	// query validation
 	var request request.RegisterVerificationRequest
 	if err := c.ShouldBindQuery(&request); err != nil {
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
@@ -89,9 +89,9 @@ func (v *VerifyHandler) Verification(c *gin.Context) {
 	// body validation
 	var req request.VerificationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		kgsErr := cus_err.New(cus_err.InvalidArgument, "Invalid request", err)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.InvalidArgument, "Invalid request", err)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 

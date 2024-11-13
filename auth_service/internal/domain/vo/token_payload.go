@@ -68,15 +68,15 @@ func ToTokenPayload(ctx context.Context, payload map[string]interface{}) (TokenP
 	// the client id is required , if not found return error
 	cidVal, exists := payload[_clientIdKey]
 	if !exists {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _clientIdKey))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _clientIdKey))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	cid, ok := cidVal.(float64)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _clientIdKey))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _clientIdKey))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	tp.ClientId = int64(cid)
 
@@ -84,15 +84,15 @@ func ToTokenPayload(ctx context.Context, payload map[string]interface{}) (TokenP
 	// the issue at is required , if not found return error
 	iatVal, exists := payload[_issueAt]
 	if !exists {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _issueAt))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _issueAt))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	iat, ok := iatVal.(float64)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _issueAt))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _issueAt))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	tp.IssueAt = int64(iat)
 
@@ -100,15 +100,15 @@ func ToTokenPayload(ctx context.Context, payload map[string]interface{}) (TokenP
 	// the merchant id is required , if not found return error
 	midVal, exists := payload[_merchantId]
 	if !exists {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _merchantId))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Missing %s in token payload", _merchantId))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	mid, ok := midVal.(float64)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _merchantId))
-		cus_otel.Error(ctx, kgsErr.Error())
-		return tp, kgsErr
+		cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Invalid %s in token payload", _merchantId))
+		cus_otel.Error(ctx, cusErr.Error())
+		return tp, cusErr
 	}
 	tp.MerchantId = int64(mid)
 

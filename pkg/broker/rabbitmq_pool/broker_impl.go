@@ -52,9 +52,9 @@ func NewBroker(user string, pass string, host string, port int, opts ...Option) 
 		}.Encode(),
 	}
 
-	pool, kgsErr := internal.NewChannelPool(dsn.String())
-	if kgsErr != nil {
-		return nil, kgsErr
+	pool, cusErr := internal.NewChannelPool(dsn.String())
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	b := &brokerImpl{
@@ -88,28 +88,28 @@ func NewBroker(user string, pass string, host string, port int, opts ...Option) 
 }
 
 func (b *brokerImpl) Close() *cus_err.CusError {
-	if kgsErr := b.pool.Close(); kgsErr != nil {
-		return kgsErr
+	if cusErr := b.pool.Close(); cusErr != nil {
+		return cusErr
 	}
 	return nil
 }
 
 func (b *brokerImpl) getChannel() (*amqp.Channel, *cus_err.CusError) {
-	ch, kgsErr := b.pool.Get()
+	ch, cusErr := b.pool.Get()
 	if ch == nil {
 		return nil, cus_err.New(cus_err.InternalServerError, "Failed to get channel", nil)
 	}
-	if kgsErr != nil {
-		return nil, kgsErr
+	if cusErr != nil {
+		return nil, cusErr
 	}
 
 	return ch, nil
 }
 
 func (b *brokerImpl) CreateExchange(exchange, kind string, durable bool) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -121,9 +121,9 @@ func (b *brokerImpl) CreateExchange(exchange, kind string, durable bool) *cus_er
 }
 
 func (b *brokerImpl) CreateQueue(queue string, durable bool) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -135,9 +135,9 @@ func (b *brokerImpl) CreateQueue(queue string, durable bool) *cus_err.CusError {
 }
 
 func (b *brokerImpl) BindQueueToExchange(queue string, exchange string, routingKey string) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -149,9 +149,9 @@ func (b *brokerImpl) BindQueueToExchange(queue string, exchange string, routingK
 }
 
 func (b *brokerImpl) Publish(ctx context.Context, exchange string, routingKey string, durable bool, msg []byte) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -173,9 +173,9 @@ func (b *brokerImpl) Publish(ctx context.Context, exchange string, routingKey st
 }
 
 func (b *brokerImpl) Consume(ctx context.Context, consumerName string, queueName string) (<-chan amqp.Delivery, *cus_err.CusError) {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return nil, kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return nil, cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -210,9 +210,9 @@ func (b *brokerImpl) Ack(d *amqp.Delivery) *cus_err.CusError {
 // deleted all queue bindings on the exchange are also deleted.  If this exchange
 // does not exist, the channel will be closed with an error.
 func (b *brokerImpl) DeleteExchange(exchange string) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -227,9 +227,9 @@ func (b *brokerImpl) DeleteExchange(exchange string) *cus_err.CusError {
 // all bindings on the queue are also deleted.  If this queue does not exist, the
 // channel will be closed with an error.
 func (b *brokerImpl) DeleteQueue(queue string) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 
@@ -243,9 +243,9 @@ func (b *brokerImpl) DeleteQueue(queue string) *cus_err.CusError {
 // UnbindQueueFromExchange removes the binding between an exchange and a queue.
 // If the binding does not exist, the channel will be closed with an error.
 func (b *brokerImpl) UnbindQueueFromExchange(queue string, exchange string, routingKey string) *cus_err.CusError {
-	ch, kgsErr := b.getChannel()
-	if kgsErr != nil {
-		return kgsErr
+	ch, cusErr := b.getChannel()
+	if cusErr != nil {
+		return cusErr
 	}
 	defer b.pool.Put(ch)
 

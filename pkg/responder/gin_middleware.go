@@ -37,8 +37,8 @@ func GinResponser() gin.HandlerFunc {
 			// if the error is a CusError, return the error response
 			// else return the 500 error response.
 			err := c.Errors.Last().Err
-			if kgsErr, ok := err.(*cus_err.CusError); ok {
-				c.JSON(kgsErr.HttpCode(), Error(kgsErr).toGinH(traceID))
+			if cusErr, ok := err.(*cus_err.CusError); ok {
+				c.JSON(cusErr.HttpCode(), Error(cusErr).toGinH(traceID))
 			} else {
 				res := UnknownError(err)
 				c.JSON(res.HttpCode(), res.toGinH(traceID))

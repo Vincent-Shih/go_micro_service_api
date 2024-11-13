@@ -48,18 +48,18 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 
 	userInfo, ok := auth_middleware.GetUserInfo(c)
 	if !ok {
-		kgsErr := cus_err.New(cus_err.Unauthorized, "Unauthenticated")
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.Unauthorized, "Unauthenticated")
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
 	// body validation
 	var request request.RegisterRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
-		cus_otel.Warn(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "Invalid request", err)
+		cus_otel.Warn(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
@@ -145,26 +145,26 @@ func (u *UserHandler) CheckUserExistence(c *gin.Context) {
 
 	var request request.CheckUserExistenceRequest
 	if err := c.ShouldBindQuery(&request); err != nil {
-		kgsErr := cus_err.New(cus_err.AccountPasswordError, "account, mobileNumber or email is required", err)
-		cus_otel.Error(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+		cusErr := cus_err.New(cus_err.AccountPasswordError, "account, mobileNumber or email is required", err)
+		cus_otel.Error(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 
 	var exists bool
-	var kgsErr *cus_err.CusError
+	var cusErr *cus_err.CusError
 	switch {
 	case request.Account != "":
-		exists, kgsErr = u.authGrpc.CheckAccountExistence(ctx, request.Account)
+		exists, cusErr = u.authGrpc.CheckAccountExistence(ctx, request.Account)
 	case request.MobileNumber != "" && request.CountryCode != "":
-		exists, kgsErr = u.userGrpc.CheckMobileExistence(ctx, request.MobileNumber, request.CountryCode)
+		exists, cusErr = u.userGrpc.CheckMobileExistence(ctx, request.MobileNumber, request.CountryCode)
 	case request.Email != "":
-		exists, kgsErr = u.userGrpc.CheckEmailExistence(ctx, request.Email)
+		exists, cusErr = u.userGrpc.CheckEmailExistence(ctx, request.Email)
 	}
 
-	if kgsErr != nil {
-		cus_otel.Error(ctx, kgsErr.Error())
-		responder.Error(kgsErr).WithContext(c)
+	if cusErr != nil {
+		cus_otel.Error(ctx, cusErr.Error())
+		responder.Error(cusErr).WithContext(c)
 		return
 	}
 

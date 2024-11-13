@@ -31,44 +31,44 @@ func (j *JwtToken) Create(ctx context.Context, secret string, claims map[string]
 func (j *JwtToken) Validate(ctx context.Context, tokenString string, secret string) (map[string]interface{}, *cus_err.CusError) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			kgsErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Unexpected signing method: %v", token.Header["alg"]))
-			cus_otel.Error(ctx, kgsErr.Message())
-			return nil, kgsErr
+			cusErr := cus_err.New(cus_err.InternalServerError, fmt.Sprintf("Unexpected signing method: %v", token.Header["alg"]))
+			cus_otel.Error(ctx, cusErr.Message())
+			return nil, cusErr
 		}
 
 		return []byte(secret), nil
 	})
 
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.Unauthorized, "Jwt token is invalid", err)
-		cus_otel.Error(ctx, kgsErr.Message())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.Unauthorized, "Jwt token is invalid", err)
+		cus_otel.Error(ctx, cusErr.Message())
+		return nil, cusErr
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	}
 
-	kgsErr := cus_err.New(cus_err.Unauthorized, "Invalid token claims")
-	cus_otel.Error(ctx, kgsErr.Message())
+	cusErr := cus_err.New(cus_err.Unauthorized, "Invalid token claims")
+	cus_otel.Error(ctx, cusErr.Message())
 
-	return nil, kgsErr
+	return nil, cusErr
 }
 
 func (j *JwtToken) GetPayload(ctx context.Context, tokenString string) (map[string]interface{}, *cus_err.CusError) {
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
-		kgsErr := cus_err.New(cus_err.Unauthorized, "Jwt token is invalid", err)
-		cus_otel.Error(ctx, kgsErr.Message())
-		return nil, kgsErr
+		cusErr := cus_err.New(cus_err.Unauthorized, "Jwt token is invalid", err)
+		cus_otel.Error(ctx, cusErr.Message())
+		return nil, cusErr
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		return claims, nil
 	}
 
-	kgsErr := cus_err.New(cus_err.Unauthorized, "Invalid token claims")
-	cus_otel.Error(ctx, kgsErr.Message())
+	cusErr := cus_err.New(cus_err.Unauthorized, "Invalid token claims")
+	cus_otel.Error(ctx, cusErr.Message())
 
-	return nil, kgsErr
+	return nil, cusErr
 }
