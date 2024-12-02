@@ -30,7 +30,7 @@ func TestMockGetMe(t *testing.T) {
 				"access_type":    "offline",
 				"audience":       "111111111111.apps.googleusercontent.com",
 				"scope":          "https://www.googleapis.com/auth/userinfo.email openid",
-				"email":          "xxx@kgs.go",
+				"email":          "xxx@cus.go",
 				"verified_email": true,
 			},
 			expected: true,

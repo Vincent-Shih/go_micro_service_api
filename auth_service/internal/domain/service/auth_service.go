@@ -191,7 +191,6 @@ func (a *AuthService) Login(ctx context.Context, token string, userId int64, pas
 		}
 	}
 
-	// TODO 不會做 等問人role是要怎樣做的
 	// Get user role.
 	// If user role not found(no role) it just continue to create token
 	role, loginErr := user.Role(ctx)

@@ -26,7 +26,7 @@ package tests
 // 			name: "success with email",
 // 			req: request.RegisterRequest{
 // 				Account:                "123",
-// 				Email:                  "test@kgs.tw",
+// 				Email:                  "test@cus.tw",
 // 				CountryCode:            "",
 // 				MobileNumber:           "",
 // 				Password:               "1111",

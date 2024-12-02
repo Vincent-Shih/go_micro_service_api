@@ -25,7 +25,7 @@ func TestMockGetMe(t *testing.T) {
 			respCode: http.StatusOK,
 			resp: map[string]any{
 				"id":    "32213231131230187459",
-				"email": "xxx@kgs.go",
+				"email": "xxx@cus.go",
 			},
 			expected: true,
 		},
